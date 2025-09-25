@@ -150,6 +150,17 @@ fun HomeScreen() {
                             color = MaterialTheme.colorScheme.onPrimary
                         )
                     }
+
+                    Spacer(Modifier.height(50.dp))
+
+                    Text(
+                        text = "¿Como funcionamos?",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(horizontal = 24.dp)
+                    )
+
                 }
             }
         }
