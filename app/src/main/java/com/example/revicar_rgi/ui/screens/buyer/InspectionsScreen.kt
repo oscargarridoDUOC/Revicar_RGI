@@ -10,16 +10,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.revicar_rgi.data.model.Inspection
-import com.example.revicar_rgi.ui.viewmodel.MainViewModel
+import com.example.revicar_rgi.ui.viewmodel.InspectionsViewModel
 
 @Composable
-fun InspectionsScreen(viewModel: MainViewModel) {
+fun InspectionsScreen(viewModel: InspectionsViewModel) {
     val inspections by viewModel.inspections.collectAsState()
 
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
+        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = PaddingValues(vertical = 16.dp)
     ) {
@@ -30,7 +28,6 @@ fun InspectionsScreen(viewModel: MainViewModel) {
                 modifier = Modifier.padding(bottom = 8.dp)
             )
         }
-
         items(inspections) { inspection ->
             InspectionCard(inspection = inspection)
         }
@@ -41,8 +38,7 @@ fun InspectionsScreen(viewModel: MainViewModel) {
 @Composable
 fun InspectionCard(inspection: Inspection) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = { /* Acción para ver el detalle de esta inspección */ }
+        modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = inspection.carModel, style = MaterialTheme.typography.titleMedium)

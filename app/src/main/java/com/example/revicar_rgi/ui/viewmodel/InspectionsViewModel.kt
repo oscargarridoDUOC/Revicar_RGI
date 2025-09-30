@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class MainViewModel(
+class InspectionsViewModel(
     private val repository: InspectionRepository = InspectionRepository()
 ) : ViewModel() {
 
