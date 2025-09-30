@@ -89,7 +89,7 @@ fun App() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(AppRoutes.BUYER_HOME_SCREEN) {
-                BuyerHomeScreen(navController = navController)
+                BuyerHomeScreen()
             }
 
             composable(AppRoutes.INSPECTIONS_SCREEN) {
