@@ -2,7 +2,9 @@ package com.example.revicar_rgi.ui.screens.buyer
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,7 +19,8 @@ fun BuyerHomeScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -57,7 +60,7 @@ fun BuyerHomeScreen() {
                 )
                 Spacer(Modifier.height(32.dp))
                 Button(
-                    onClick = { /* Aquí iría la navegación para solicitar una inspección */ },
+                    onClick = { /* Para solicitar una inspección */ },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)

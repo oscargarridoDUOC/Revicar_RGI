@@ -1,8 +1,8 @@
 package com.example.revicar_rgi.ui.screens.buyer
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -16,20 +16,23 @@ import com.example.revicar_rgi.ui.viewmodel.InspectionsViewModel
 fun InspectionsScreen(viewModel: InspectionsViewModel) {
     val inspections by viewModel.inspections.collectAsState()
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        contentPadding = PaddingValues(vertical = 16.dp)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp)
     ) {
-        item {
-            Text(
-                text = "Mis Inspecciones",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-        }
-        items(inspections) { inspection ->
+        Text(
+            text = "Mis Inspecciones",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        inspections.forEach { inspection ->
             InspectionCard(inspection = inspection)
+            Spacer(modifier = Modifier.height(12.dp))
         }
     }
 }
