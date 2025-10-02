@@ -22,9 +22,11 @@ import com.example.revicar_rgi.navigation.AppRoutes
 import com.example.revicar_rgi.navigation.BottomBar
 import com.example.revicar_rgi.ui.screens.buyer.BuyerHomeScreen
 import com.example.revicar_rgi.ui.screens.buyer.InspectionsScreen
+import com.example.revicar_rgi.ui.screens.common.LoginScreen
 import com.example.revicar_rgi.ui.screens.common.NotificationsScreen
 import com.example.revicar_rgi.ui.theme.Revicar_RGITheme
 import com.example.revicar_rgi.ui.viewmodel.InspectionsViewModel
+import com.example.revicar_rgi.ui.viewmodel.LoginViewModel
 import com.example.revicar_rgi.ui.viewmodel.NotificationsViewModel
 
 class MainActivity : ComponentActivity() {
@@ -68,7 +70,7 @@ fun App() {
                             contentDescription = "Notificaciones"
                         )
                     }
-                    IconButton(onClick = { /* Lógica para navegar a Login/Perfil */ }) {
+                    IconButton(onClick = { navController.navigate(AppRoutes.LOGIN_SCREEN) }) {
                         Icon(
                             imageVector = Icons.Filled.AccountCircle,
                             contentDescription = "Iniciar Sesión"
@@ -100,6 +102,11 @@ fun App() {
             composable(AppRoutes.NOTIFICATIONS_SCREEN) {
                 val viewModel: NotificationsViewModel = viewModel()
                 NotificationsScreen(viewModel = viewModel)
+            }
+
+            composable(AppRoutes.LOGIN_SCREEN) {
+                val viewModel: LoginViewModel = viewModel()
+                LoginScreen(viewModel = viewModel)
             }
         }
     }
