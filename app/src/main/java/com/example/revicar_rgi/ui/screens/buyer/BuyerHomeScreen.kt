@@ -12,10 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.revicar_rgi.R
 
 @Composable
-fun BuyerHomeScreen() {
+fun BuyerHomeScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
