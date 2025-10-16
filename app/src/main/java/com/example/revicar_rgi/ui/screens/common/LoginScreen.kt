@@ -1,5 +1,6 @@
 package com.example.revicar_rgi.ui.screens.common
 
+import android.util.Patterns
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -10,6 +11,10 @@ import androidx.compose.ui.unit.dp
 import com.example.revicar_rgi.ui.viewmodel.AuthState
 import com.example.revicar_rgi.ui.viewmodel.AuthViewModel
 
+private fun isValidEmail(email: String): Boolean {
+    return email.isNotBlank() && Patterns.EMAIL_ADDRESS.matcher(email).matches()
+}
+
 @Composable
 fun LoginScreen(
     authViewModel: AuthViewModel,
@@ -18,7 +23,7 @@ fun LoginScreen(
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-
+    var validationError by remember { mutableStateOf<String?>(null) }
     val authState by authViewModel.authState.collectAsState()
 
     LaunchedEffect(authState) {
@@ -37,24 +42,43 @@ fun LoginScreen(
         Text("Iniciar Sesión", style = MaterialTheme.typography.headlineLarge)
         Spacer(Modifier.height(32.dp))
 
-        TextField(
+        OutlinedTextField(
             value = email,
             onValueChange = { email = it },
             label = { Text("Email") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
         )
         Spacer(Modifier.height(8.dp))
-        TextField(
+        OutlinedTextField(
             value = password,
             onValueChange = { password = it },
             label = { Text("Contraseña") },
             visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
         )
         Spacer(Modifier.height(16.dp))
 
+        if (validationError != null) {
+            Text(
+                text = validationError!!,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+        }
+
         Button(
-            onClick = { authViewModel.login(email, password) },
+            onClick = {
+                validationError = null
+                if (email.isBlank() || password.isBlank()) {
+                    validationError = "El email y la contraseña son obligatorios."
+                } else if (!isValidEmail(email.trim())) {
+                    validationError = "El formato del email no es válido."
+                } else {
+                    authViewModel.login(email.trim(), password.trim())
+                }
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Ingresar")
