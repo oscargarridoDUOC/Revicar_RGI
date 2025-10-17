@@ -40,7 +40,6 @@ class MainActivity : ComponentActivity() {
                 ) {
                     composable(AppRoutes.SPLASH_SCREEN) {
                         SplashScreen {
-                            // CAMBIO: Ahora dirige a MAIN_APP_SCREEN si está logueado
                             val destination = if (isLoggedIn) AppRoutes.MAIN_APP_SCREEN else AppRoutes.LOGIN_SCREEN
                             navController.navigate(destination) {
                                 popUpTo(AppRoutes.SPLASH_SCREEN) { inclusive = true }
@@ -52,7 +51,6 @@ class MainActivity : ComponentActivity() {
                         LoginScreen(
                             authViewModel = authViewModel,
                             onSuccessNavigation = { isMechanic ->
-                                // CAMBIO: Si no es mecánico, va a MAIN_APP_SCREEN
                                 val route = if (isMechanic) AppRoutes.MECHANIC_HOME_SCREEN else AppRoutes.MAIN_APP_SCREEN
                                 navController.navigate(route) {
                                     popUpTo(AppRoutes.LOGIN_SCREEN) { inclusive = true }
@@ -66,7 +64,6 @@ class MainActivity : ComponentActivity() {
                         RegisterScreen(
                             authViewModel = authViewModel,
                             onSuccessNavigation = { isMechanic ->
-                                // CAMBIO: Si no es mecánico, va a MAIN_APP_SCREEN
                                 val route = if (isMechanic) AppRoutes.MECHANIC_HOME_SCREEN else AppRoutes.MAIN_APP_SCREEN
                                 navController.navigate(route) {
                                     popUpTo(AppRoutes.REGISTER_SCREEN) { inclusive = true }
@@ -79,13 +76,12 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    // CAMBIO: Se reemplaza BuyerHomeScreen por el contenedor principal
                     composable(AppRoutes.MAIN_APP_SCREEN) {
                         MainAppScreen(authViewModel = authViewModel, navControllerApp = navController)
                     }
 
                     composable(AppRoutes.MECHANIC_HOME_SCREEN) {
-                        MechanicHomeScreen()
+                        MechanicHomeScreen(authViewModel = authViewModel, navControllerApp = navController)
                     }
                 }
             }
