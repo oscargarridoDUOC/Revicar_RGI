@@ -20,6 +20,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.revicar_rgi.navigation.AppRoutes
 import com.example.revicar_rgi.navigation.BottomBar
+import com.example.revicar_rgi.ui.screens.FormularioScreen
 import com.example.revicar_rgi.ui.screens.buyer.BuyerHomeScreen
 import com.example.revicar_rgi.ui.screens.buyer.InspectionsScreen
 import com.example.revicar_rgi.ui.screens.common.LoginScreen
@@ -28,6 +29,7 @@ import com.example.revicar_rgi.ui.theme.Revicar_RGITheme
 import com.example.revicar_rgi.ui.viewmodel.InspectionsViewModel
 import com.example.revicar_rgi.ui.viewmodel.LoginViewModel
 import com.example.revicar_rgi.ui.viewmodel.NotificationsViewModel
+import java.util.Calendar
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +42,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
+/* Seleccionar fecha*/
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App() {
@@ -91,7 +93,7 @@ fun App() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(AppRoutes.BUYER_HOME_SCREEN) {
-                BuyerHomeScreen()
+                BuyerHomeScreen(navHost = navController)
             }
 
             composable(AppRoutes.INSPECTIONS_SCREEN) {
@@ -108,6 +110,10 @@ fun App() {
                 val viewModel: LoginViewModel = viewModel()
                 LoginScreen(viewModel = viewModel)
             }
+            composable(AppRoutes.BUYER_FORM_SCREEN) {
+                FormularioScreen(navHost = navController)
+            }
         }
     }
 }
+

@@ -6,4 +6,7 @@ object AppRoutes {
     const val NOTIFICATIONS_SCREEN = "notifications_screen"
     const val LOGIN_SCREEN = "login_screen"
     const val INSPECTION_REQUEST_SCREEN = "inspection_request"
+    /*ruta de formulario de inspeccion*/
+    const val BUYER_FORM_SCREEN = "buyer_form_screen"
+    const val BUYER_FORM_SERVICES = "buyer_form_services"
 }
