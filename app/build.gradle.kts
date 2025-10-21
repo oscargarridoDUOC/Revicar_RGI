@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.google.firebase.firestore)
     implementation(libs.google.firebase.analytics)
 
+    implementation("androidx.compose.material:material-icons-extended")
     // Jetpack Compose integration
     implementation(libs.androidx.navigation)
     implementation(libs.androidx.datastore)

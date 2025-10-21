@@ -12,4 +12,6 @@ object AppRoutes {
 
     const val INSPECTIONS_SCREEN = "inspections_screen"
     const val NOTIFICATIONS_SCREEN = "notifications_screen"
+
+    const val INSPECTION_FORM_SCREEN = "inspection_form_screen"
 }

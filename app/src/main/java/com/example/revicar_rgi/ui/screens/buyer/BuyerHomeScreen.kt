@@ -12,10 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.revicar_rgi.R
+import com.example.revicar_rgi.navigation.AppRoutes
 
 @Composable
-fun BuyerHomeScreen() {
+fun BuyerHomeScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -60,7 +62,7 @@ fun BuyerHomeScreen() {
                 )
                 Spacer(Modifier.height(32.dp))
                 Button(
-                    onClick = { /* Para solicitar una inspección */ },
+                    onClick = { navController.navigate(AppRoutes.INSPECTION_FORM_SCREEN) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)

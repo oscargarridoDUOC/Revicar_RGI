@@ -15,6 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.revicar_rgi.navigation.AppRoutes
 import com.example.revicar_rgi.navigation.BottomBar
 import com.example.revicar_rgi.ui.screens.buyer.BuyerHomeScreen
+import com.example.revicar_rgi.ui.screens.buyer.InspectionFormScreen
 import com.example.revicar_rgi.ui.screens.buyer.InspectionsScreen
 import com.example.revicar_rgi.ui.screens.common.NotificationsScreen
 import com.example.revicar_rgi.ui.viewmodel.AuthViewModel
@@ -53,7 +54,7 @@ fun MainAppScreen(authViewModel: AuthViewModel, navControllerApp: NavHostControl
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(AppRoutes.BUYER_HOME_SCREEN) {
-                BuyerHomeScreen()
+                BuyerHomeScreen(navController = navController)
             }
             composable(AppRoutes.INSPECTIONS_SCREEN) {
                 val viewModel: InspectionsViewModel = viewModel()
@@ -62,6 +63,10 @@ fun MainAppScreen(authViewModel: AuthViewModel, navControllerApp: NavHostControl
             composable(AppRoutes.NOTIFICATIONS_SCREEN) {
                 val viewModel: NotificationsViewModel = viewModel()
                 NotificationsScreen(viewModel = viewModel)
+            }
+
+            composable(AppRoutes.INSPECTION_FORM_SCREEN) {
+                InspectionFormScreen(navHost = navController)
             }
         }
     }
