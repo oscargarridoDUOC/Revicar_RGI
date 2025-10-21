@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.revicar_rgi.ui.viewmodel.InspectionFormViewModel
@@ -31,7 +32,7 @@ fun InspectionFormScreen(
 
     LaunchedEffect(uiState.isSubmitted) {
         if (uiState.isSubmitted) {
-            delay(2000)
+            delay(1000)
             navHost.popBackStack()
         }
     }
@@ -39,7 +40,10 @@ fun InspectionFormScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Formulario de Inspección") },
+                title = { Text("Formulario de Inspección",
+                    fontSize = 28.sp,
+                    modifier = Modifier.padding(bottom = 20.dp))
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = MaterialTheme.colorScheme.onPrimary
