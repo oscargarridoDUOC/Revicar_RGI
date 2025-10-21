@@ -24,11 +24,20 @@ fun LoginScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var validationError by remember { mutableStateOf<String?>(null) }
+
     val authState by authViewModel.authState.collectAsState()
 
     LaunchedEffect(authState) {
-        if (authState is AuthState.Success) {
-            onSuccessNavigation((authState as AuthState.Success).isMechanic)
+        when (val state = authState) {
+            is AuthState.Success -> {
+                onSuccessNavigation(state.isMechanic)
+                authViewModel.resetAuthState()
+            }
+            is AuthState.Error -> {
+                println("Error de login: ${state.message}")
+                authViewModel.resetAuthState()
+            }
+            else -> Unit
         }
     }
 
@@ -47,7 +56,8 @@ fun LoginScreen(
             onValueChange = { email = it },
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            enabled = authState != AuthState.Loading
         )
         Spacer(Modifier.height(8.dp))
         OutlinedTextField(
@@ -56,7 +66,8 @@ fun LoginScreen(
             label = { Text("Contraseña") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            enabled = authState != AuthState.Loading
         )
         Spacer(Modifier.height(16.dp))
 
@@ -79,23 +90,22 @@ fun LoginScreen(
                     authViewModel.login(email.trim(), password.trim())
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = authState != AuthState.Loading
         ) {
-            Text("Ingresar")
+            if (authState == AuthState.Loading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    strokeWidth = 2.dp,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            } else {
+                Text("Ingresar")
+            }
         }
 
         TextButton(onClick = onNavigateToRegister) {
             Text("¿No tienes cuenta? Regístrate")
-        }
-
-        when (val state = authState) {
-            is AuthState.Loading -> CircularProgressIndicator(modifier = Modifier.padding(top = 16.dp))
-            is AuthState.Error -> Text(
-                text = state.message,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(top = 16.dp)
-            )
-            else -> {}
         }
     }
 }

@@ -7,7 +7,6 @@ import com.example.revicar_rgi.data.repository.AuthRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-// Representa los posibles estados de la pantalla de autenticación
 sealed class AuthState {
     object Idle : AuthState()
     object Loading : AuthState()
@@ -15,19 +14,56 @@ sealed class AuthState {
     data class Error(val message: String) : AuthState()
 }
 
+
+enum class SplashCheckState {
+    Loading,
+    NavigateToLogin,
+    NavigateToUserHome,
+    NavigateToMechanicHome
+}
+
 class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
 
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
-    // Un flujo que nos dice si el usuario ya tiene una sesión iniciada
     val isLoggedIn = repository.getUidFlow().map { it != null }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = false
     )
 
-    // Función que se llamará desde la pantalla de registro
+    private val _splashState = MutableStateFlow<SplashCheckState>(SplashCheckState.Loading)
+    val splashState: StateFlow<SplashCheckState> = _splashState.asStateFlow()
+
+    fun checkCurrentUser() {
+        viewModelScope.launch {
+            _splashState.value = SplashCheckState.Loading
+
+            val uid = repository.getUidFlow().first()
+
+            if (uid == null) {
+                _splashState.value = SplashCheckState.NavigateToLogin
+            } else {
+                val roleResult = repository.getUserRole(uid)
+                _splashState.value = roleResult.fold(
+                    onSuccess = { isMechanic ->
+                        if (isMechanic) {
+                            SplashCheckState.NavigateToMechanicHome
+                        } else {
+                            SplashCheckState.NavigateToUserHome
+                        }
+                    },
+                    onFailure = {
+                        repository.logout()
+                        SplashCheckState.NavigateToLogin
+                    }
+                )
+            }
+        }
+    }
+
+
     fun register(
         email: String,
         password: String,
@@ -48,7 +84,6 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
         }
     }
 
-    // Función que se llamará desde la pantalla de login
     fun login(email: String, password: String) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
@@ -56,7 +91,6 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
 
             loginResult.fold(
                 onSuccess = { uid ->
-                    // Si el login es exitoso, ahora consultamos el rol
                     val roleResult = repository.getUserRole(uid)
                     _authState.value = roleResult.fold(
                         onSuccess = { isMechanic -> AuthState.Success(uid, isMechanic) },
@@ -75,6 +109,10 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
             repository.logout()
             _authState.value = AuthState.Idle
         }
+    }
+
+    fun resetAuthState() {
+        _authState.value = AuthState.Idle
     }
 }
 

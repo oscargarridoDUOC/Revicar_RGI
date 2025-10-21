@@ -1,11 +1,10 @@
 package com.example.revicar_rgi
 
+import SplashScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -14,7 +13,6 @@ import com.example.revicar_rgi.navigation.AppRoutes
 import com.example.revicar_rgi.ui.screens.MainAppScreen
 import com.example.revicar_rgi.ui.screens.common.LoginScreen
 import com.example.revicar_rgi.ui.screens.common.RegisterScreen
-import com.example.revicar_rgi.ui.screens.common.SplashScreen
 import com.example.revicar_rgi.ui.screens.mechanic.MechanicHomeScreen
 import com.example.revicar_rgi.ui.theme.Revicar_RGITheme
 import com.example.revicar_rgi.ui.viewmodel.AuthViewModel
@@ -31,28 +29,28 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             Revicar_RGITheme {
-                val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
                 val navController = rememberNavController()
 
                 NavHost(
                     navController = navController,
                     startDestination = AppRoutes.SPLASH_SCREEN
                 ) {
+
                     composable(AppRoutes.SPLASH_SCREEN) {
-                        SplashScreen {
-                            // CAMBIO: Ahora dirige a MAIN_APP_SCREEN si está logueado
-                            val destination = if (isLoggedIn) AppRoutes.MAIN_APP_SCREEN else AppRoutes.LOGIN_SCREEN
-                            navController.navigate(destination) {
-                                popUpTo(AppRoutes.SPLASH_SCREEN) { inclusive = true }
+                        SplashScreen(
+                            authViewModel = authViewModel,
+                            onNavigate = { route ->
+                                navController.navigate(route) {
+                                    popUpTo(AppRoutes.SPLASH_SCREEN) { inclusive = true }
+                                }
                             }
-                        }
+                        )
                     }
 
                     composable(AppRoutes.LOGIN_SCREEN) {
                         LoginScreen(
                             authViewModel = authViewModel,
                             onSuccessNavigation = { isMechanic ->
-                                // CAMBIO: Si no es mecánico, va a MAIN_APP_SCREEN
                                 val route = if (isMechanic) AppRoutes.MECHANIC_HOME_SCREEN else AppRoutes.MAIN_APP_SCREEN
                                 navController.navigate(route) {
                                     popUpTo(AppRoutes.LOGIN_SCREEN) { inclusive = true }
@@ -66,7 +64,6 @@ class MainActivity : ComponentActivity() {
                         RegisterScreen(
                             authViewModel = authViewModel,
                             onSuccessNavigation = { isMechanic ->
-                                // CAMBIO: Si no es mecánico, va a MAIN_APP_SCREEN
                                 val route = if (isMechanic) AppRoutes.MECHANIC_HOME_SCREEN else AppRoutes.MAIN_APP_SCREEN
                                 navController.navigate(route) {
                                     popUpTo(AppRoutes.REGISTER_SCREEN) { inclusive = true }
@@ -79,7 +76,6 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    // CAMBIO: Se reemplaza BuyerHomeScreen por el contenedor principal
                     composable(AppRoutes.MAIN_APP_SCREEN) {
                         MainAppScreen(authViewModel = authViewModel, navControllerApp = navController)
                     }

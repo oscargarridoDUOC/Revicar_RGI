@@ -25,11 +25,10 @@ class AuthRepository(context: Context) {
         phone: String
     ): Result<String> {
         return try {
-            // 1. Crear usuario en Firebase Authentication (solo con email y contraseña)
+
             val authResult = auth.createUserWithEmailAndPassword(email, password).await()
             val uid = authResult.user?.uid ?: return Result.failure(Exception("No se pudo obtener UID"))
 
-            // 2. Crear nuestro objeto User completo para guardarlo en Firestore
             val user = User(
                 uid = uid,
                 email = email,
@@ -63,7 +62,7 @@ class AuthRepository(context: Context) {
     suspend fun getUserRole(uid: String): Result<Boolean> {
         return try {
             val document = firestore.collection("users").document(uid).get().await()
-            val isMechanic = document.getBoolean("isMechanic") ?: false
+            val isMechanic = document.getBoolean("mechanic") ?: false
             Result.success(isMechanic)
         } catch (e: Exception) {
             Result.failure(e)
