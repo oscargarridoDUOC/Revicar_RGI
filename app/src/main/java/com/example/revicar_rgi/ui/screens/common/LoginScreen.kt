@@ -23,6 +23,7 @@ fun LoginScreen(
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
     var validationError by remember { mutableStateOf<String?>(null) }
 
     val authState by authViewModel.authState.collectAsState()
@@ -34,7 +35,7 @@ fun LoginScreen(
                 authViewModel.resetAuthState()
             }
             is AuthState.Error -> {
-                println("Error de login: ${state.message}")
+                validationError = state.message
                 authViewModel.resetAuthState()
             }
             else -> Unit
@@ -70,7 +71,6 @@ fun LoginScreen(
             enabled = authState != AuthState.Loading
         )
         Spacer(Modifier.height(16.dp))
-
         if (validationError != null) {
             Text(
                 text = validationError!!,

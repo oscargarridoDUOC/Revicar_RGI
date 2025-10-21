@@ -27,12 +27,6 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
-    val isLoggedIn = repository.getUidFlow().map { it != null }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = false
-    )
-
     private val _splashState = MutableStateFlow<SplashCheckState>(SplashCheckState.Loading)
     val splashState: StateFlow<SplashCheckState> = _splashState.asStateFlow()
 

@@ -43,7 +43,7 @@ fun RegisterScreen(
                 authViewModel.resetAuthState()
             }
             is AuthState.Error -> {
-                println("Error de registro: ${state.message}")
+                validationError = state.message
                 authViewModel.resetAuthState()
             }
             else -> Unit
@@ -89,8 +89,10 @@ fun RegisterScreen(
         OutlinedTextField(
             value = run,
             onValueChange = { newRun ->
-                if (newRun.length <= 10 && newRun.all { it.isDigit() || it.equals('k', ignoreCase = true) || it == '-' }) {
-                    run = newRun
+                if (newRun.length <= 10) {
+                    if (newRun.all { it.isDigit() || it.equals('k', ignoreCase = true) || it == '-' }) {
+                        run = newRun
+                    }
                 }
             },
             label = { Text("Run * (ej: 12345678-k)") },
@@ -114,8 +116,7 @@ fun RegisterScreen(
                 if (newPhoneValue.all { it.isDigit() } && newPhoneValue.length <= 9) {
                     phone = newPhoneValue
                 }
-            },
-            modifier = Modifier.fillMaxWidth()
+            }
         )
         Spacer(Modifier.height(8.dp))
         OutlinedTextField(
@@ -138,7 +139,6 @@ fun RegisterScreen(
             enabled = authState != AuthState.Loading
         )
         Spacer(Modifier.height(16.dp))
-
         Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(
                 checked = isMechanic,
@@ -148,7 +148,6 @@ fun RegisterScreen(
             Text("¿Eres mecánico?", modifier = Modifier.padding(start = 8.dp))
         }
         Spacer(Modifier.height(16.dp))
-
 
         if (validationError != null) {
             Text(
@@ -162,8 +161,16 @@ fun RegisterScreen(
             onClick = {
                 validationError = null
                 val fullPhoneNumber = "+56${phone}"
-                if (name.isBlank() || lastName.isBlank() || email.isBlank() || password.isBlank()) {
+                val cleanRun = run.trim()
+
+                val isRunFormatValid = cleanRun.length >= 3 &&
+                        cleanRun.length <= 10 &&
+                        cleanRun[cleanRun.length - 2] == '-'
+
+                if (name.isBlank() || lastName.isBlank() || email.isBlank() || password.isBlank() || cleanRun.isBlank()) {
                     validationError = "Todos los campos con * son obligatorios."
+                } else if (!isRunFormatValid) {
+                    validationError = "El formato del RUN no es válido (ej: 12345678-k)."
                 } else if (!isValidEmail(email.trim())) {
                     validationError = "El formato del email no es válido."
                 } else if (password.length < 6 || password.length > 12) {
@@ -173,7 +180,7 @@ fun RegisterScreen(
                 } else if (password != confirmPassword) {
                     validationError = "Las contraseñas no coinciden."
                 } else {
-                    authViewModel.register(email.trim(), password.trim(), isMechanic, name.trim(), lastName.trim(), run.trim(), fullPhoneNumber.trim())
+                    authViewModel.register(email.trim(), password.trim(), isMechanic, name.trim(), lastName.trim(), cleanRun, fullPhoneNumber.trim())
                 }
             },
             modifier = Modifier.fillMaxWidth(),

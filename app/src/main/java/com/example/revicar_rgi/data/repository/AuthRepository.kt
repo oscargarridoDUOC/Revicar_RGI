@@ -2,8 +2,11 @@ package com.example.revicar_rgi.data.repository
 
 import android.content.Context
 import com.example.revicar_rgi.data.local.SessionManager
-import com.example.revicar_rgi.data.model.User
 import com.google.firebase.Firebase
+import com.google.firebase.FirebaseNetworkException
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
@@ -29,22 +32,31 @@ class AuthRepository(context: Context) {
             val authResult = auth.createUserWithEmailAndPassword(email, password).await()
             val uid = authResult.user?.uid ?: return Result.failure(Exception("No se pudo obtener UID"))
 
-            val user = User(
-                uid = uid,
-                email = email,
-                isMechanic = isMechanic,
-                name = name,
-                lastName = lastName,
-                run = run,
-                phone = phone
+
+            val userMap = mapOf(
+                "uid" to uid,
+                "email" to email,
+                "mechanic" to isMechanic,
+                "name" to name,
+                "lastName" to lastName,
+                "run" to run,
+                "phone" to phone
             )
 
-            firestore.collection("users").document(uid).set(user).await()
+            firestore.collection("users").document(uid).set(userMap).await()
 
             sessionManager.saveUid(uid)
             Result.success(uid)
         } catch (e: Exception) {
-            Result.failure(e)
+            val spanishMessage = when (e) {
+                is FirebaseAuthUserCollisionException ->
+                    "Este correo electrónico ya está registrado."
+                is FirebaseNetworkException ->
+                    "No hay conexión a internet. Revisa tu conexión."
+                else ->
+                    "Error desconocido en el registro. Intenta más tarde."
+            }
+            Result.failure(Exception(spanishMessage))
         }
     }
 
@@ -55,7 +67,17 @@ class AuthRepository(context: Context) {
             sessionManager.saveUid(uid)
             Result.success(uid)
         } catch (e: Exception) {
-            Result.failure(e)
+            val spanishMessage = when (e) {
+                is FirebaseAuthInvalidUserException ->
+                    "El correo electrónico no está registrado."
+                is FirebaseAuthInvalidCredentialsException ->
+                    "La contraseña es incorrecta. Inténtalo de nuevo."
+                is FirebaseNetworkException ->
+                    "No hay conexión a internet. Revisa tu conexión."
+                else ->
+                    "Error de inicio de sesión. Intenta más tarde."
+            }
+            Result.failure(Exception(spanishMessage))
         }
     }
 
@@ -65,7 +87,13 @@ class AuthRepository(context: Context) {
             val isMechanic = document.getBoolean("mechanic") ?: false
             Result.success(isMechanic)
         } catch (e: Exception) {
-            Result.failure(e)
+            val spanishMessage = when (e) {
+                is FirebaseNetworkException ->
+                    "No se pudo verificar tu rol. Revisa tu conexión."
+                else ->
+                    "No se pudo verificar tu rol. (Usuario no encontrado)."
+            }
+            Result.failure(Exception(spanishMessage))
         }
     }
 
