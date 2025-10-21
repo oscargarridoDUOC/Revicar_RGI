@@ -132,7 +132,28 @@ fun InspectionFormScreen(
             )
 
             Spacer(Modifier.height(24.dp))
-            SectionTitle("3. Tipo de Servicio")
+            SectionTitle("3. Ubicación de la Inspección")
+
+            OutlinedTextField(
+                value = uiState.comuna,
+                onValueChange = viewModel::updateComuna,
+                label = { Text("Comuna") },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !uiState.isLoading && !uiState.isSubmitted,
+                singleLine = true
+            )
+            Spacer(Modifier.height(8.dp))
+            OutlinedTextField(
+                value = uiState.direccion,
+                onValueChange = viewModel::updateDireccion,
+                label = { Text("Dirección (Calle y Número)") },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !uiState.isLoading && !uiState.isSubmitted,
+                singleLine = true
+            )
+
+            Spacer(Modifier.height(24.dp))
+            SectionTitle("4. Tipo de Servicio")
 
             val servicios = remember {
                 listOf(
@@ -196,7 +217,7 @@ fun InspectionFormScreen(
                     uiState.dateMillis?.let { fechaEnMillis ->
                         val fechaFormateada = convertMillisToDate(fechaEnMillis)
                         val mensajeExito =
-                            "✅ ¡Éxito! Hora reservada a las ${uiState.time} del $fechaFormateada."
+                            "¡Éxito! Hora reservada a las ${uiState.time} del $fechaFormateada."
 
                         Text(
                             text = mensajeExito,

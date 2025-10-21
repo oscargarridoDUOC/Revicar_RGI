@@ -1,11 +1,6 @@
 package com.example.revicar_rgi.data.model
 
-import com.google.firebase.firestore.DocumentId
-
-data class Inspection(
-    @DocumentId
-    val id: String = "",
-    val userId: String = "",
+data class InspectionFormUiState(
     val dateMillis: Long? = null,
     val time: String = "",
     val make: String = "",
@@ -14,6 +9,7 @@ data class Inspection(
     val comuna: String = "",
     val direccion: String = "",
     val serviceType: String = "",
-    val status: String = "",
-    val timestamp: Long? = null
+    val error: String? = null,
+    val isSubmitted: Boolean = false,
+    val isLoading: Boolean = false
 )
