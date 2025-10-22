@@ -81,7 +81,10 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable(AppRoutes.MECHANIC_HOME_SCREEN) {
-                        MechanicHomeScreen()
+                        MechanicHomeScreen(
+                            authViewModel = authViewModel,
+                            navControllerApp = navController
+                        )
                     }
                 }
             }

@@ -3,6 +3,7 @@ package com.example.revicar_rgi.data.repository
 import com.example.revicar_rgi.data.model.Inspection
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObjects
@@ -22,14 +23,16 @@ class InspectionRepository {
         year: String,
         comuna: String,
         direccion: String,
-        serviceType: String
+        serviceType: String,
+        servicePrice: Double
     ): Result<Unit> {
         return try {
             val userId = auth.currentUser?.uid
                 ?: return Result.failure(Exception("Usuario no autenticado."))
 
-            val inspectionData = hashMapOf(
+            val inspectionData = mapOf(
                 "userId" to userId,
+                "mechanicId" to null,
                 "dateMillis" to dateMillis,
                 "time" to time,
                 "make" to make,
@@ -38,8 +41,9 @@ class InspectionRepository {
                 "comuna" to comuna,
                 "direccion" to direccion,
                 "serviceType" to serviceType,
-                "status" to "Agendada",
-                "timestamp" to System.currentTimeMillis()
+                "servicePrice" to servicePrice,
+                "status" to "PENDIENTE",
+                "timestamp" to FieldValue.serverTimestamp()
             )
 
             inspectionsCollection.add(inspectionData).await()
@@ -67,6 +71,85 @@ class InspectionRepository {
 
         } catch (e: Exception) {
             Result.failure(Exception("Error al obtener las inspecciones: ${e.message}"))
+        }
+    }
+
+    suspend fun getAvailableInspections(): Result<List<Inspection>> {
+        return try {
+            val querySnapshot = inspectionsCollection
+                .whereEqualTo("status", "PENDIENTE")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .get()
+                .await()
+
+            val inspections = querySnapshot.toObjects<Inspection>()
+            Result.success(inspections)
+
+        } catch (e: Exception) {
+            Result.failure(Exception("Error al obtener trabajos disponibles: ${e.message}"))
+        }
+    }
+
+    suspend fun getMyJobs(): Result<List<Inspection>> {
+        return try {
+            val mechanicId = auth.currentUser?.uid
+                ?: return Result.failure(Exception("Mecánico no autenticado."))
+
+            val querySnapshot = inspectionsCollection
+                .whereEqualTo("mechanicId", mechanicId)
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .get()
+                .await()
+
+            val inspections = querySnapshot.toObjects<Inspection>()
+            Result.success(inspections)
+
+        } catch (e: Exception) {
+            Result.failure(Exception("Error al obtener mis trabajos: ${e.message}"))
+        }
+    }
+
+    suspend fun acceptInspection(inspectionId: String): Result<Unit> {
+        return try {
+            val mechanicId = auth.currentUser?.uid
+                ?: return Result.failure(Exception("Mecánico no autenticado."))
+
+            inspectionsCollection.document(inspectionId).update(
+                mapOf(
+                    "status" to "ASIGNADO",
+                    "mechanicId" to mechanicId
+                )
+            ).await()
+
+            Result.success(Unit)
+
+        } catch (e: Exception) {
+            Result.failure(Exception("Error al aceptar el trabajo: ${e.message}"))
+        }
+    }
+
+    suspend fun completeInspection(inspectionId: String): Result<Unit> {
+        return try {
+            val currentMechanicId = auth.currentUser?.uid
+                ?: return Result.failure(Exception("Mecánico no autenticado."))
+
+            val inspectionRef = inspectionsCollection.document(inspectionId)
+
+            firestore.runTransaction { transaction ->
+                val snapshot = transaction.get(inspectionRef)
+                val assignedMechanicId = snapshot.getString("mechanicId")
+
+                if (assignedMechanicId == currentMechanicId) {
+                    transaction.update(inspectionRef, "status", "FINALIZADO")
+                } else {
+                    throw Exception("No tienes permiso para finalizar este trabajo.")
+                }
+            }.await()
+
+            Result.success(Unit)
+
+        } catch (e: Exception) {
+            Result.failure(Exception(e.message ?: "Error al finalizar el trabajo"))
         }
     }
 }

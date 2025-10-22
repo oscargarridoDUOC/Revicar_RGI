@@ -66,18 +66,32 @@ class InspectionFormViewModel : ViewModel() {
             return
         }
 
+        fun parsePrice(serviceString: String): Double {
+            return serviceString.substringAfterLast("$")
+                .replace(".", "")
+                .toDoubleOrNull() ?: 0.0
+        }
+
+        val price = parsePrice(currentState.serviceType)
+
+        if (price == 0.0) {
+            _uiState.update { it.copy(error = "Error al procesar el precio del servicio") }
+            return
+        }
+
         _uiState.update { it.copy(isLoading = true, error = null) }
 
         viewModelScope.launch {
             val result = repository.submitInspection(
-                dateMillis = currentState.dateMillis!!,
+                dateMillis = currentState.dateMillis,
                 time = currentState.time,
                 make = currentState.make,
                 model = currentState.model,
                 year = currentState.year,
                 comuna = currentState.comuna,
                 direccion = currentState.direccion,
-                serviceType = currentState.serviceType
+                serviceType = currentState.serviceType,
+                servicePrice = price
             )
 
             result.fold(
@@ -89,9 +103,5 @@ class InspectionFormViewModel : ViewModel() {
                 }
             )
         }
-    }
-
-    fun clearForm() {
-        _uiState.value = InspectionFormUiState()
     }
 }

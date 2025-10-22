@@ -1,0 +1,51 @@
+package com.example.revicar_rgi.ui.screens.mechanic
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.example.revicar_rgi.data.model.Inspection
+
+@Composable
+fun MyJobsScreen(
+    jobs: List<Inspection>,
+    isLoading: Boolean,
+    error: String?,
+    onJobClick: (String) -> Unit
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        when {
+            isLoading && jobs.isEmpty() -> {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+            error != null -> {
+                Text(
+                    text = "Error: $error",
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.align(Alignment.Center).padding(16.dp)
+                )
+            }
+            jobs.isEmpty() -> {
+                Text(
+                    text = "Aún no has aceptado ningún trabajo.",
+                    modifier = Modifier.align(Alignment.Center).padding(16.dp)
+                )
+            }
+            else -> {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(jobs) { job ->
+                        JobCard(job = job, onClick = { onJobClick(job.id) })
+                    }
+                }
+            }
+        }
+    }
+}
