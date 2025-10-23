@@ -113,7 +113,7 @@ fun MechanicInspectionDetailScreen(
                         Spacer(Modifier.height(24.dp))
 
                         Text("Detalles de la Cita", style = MaterialTheme.typography.titleMedium)
-                        Divider(modifier = Modifier.padding(vertical = 8.dp))
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                         Text("Fecha: ${inspection.dateMillis?.let { convertMillisToDate(it) }}")
                         Text("Hora: ${inspection.time}")
                         Text("Lugar: ${inspection.direccion}, ${inspection.comuna}")
@@ -121,7 +121,7 @@ fun MechanicInspectionDetailScreen(
                         Spacer(Modifier.height(24.dp))
 
                         Text("Servicio Solicitado", style = MaterialTheme.typography.titleMedium)
-                        Divider(modifier = Modifier.padding(vertical = 8.dp))
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                         Text(inspection.serviceType)
 
                         Spacer(Modifier.height(32.dp))

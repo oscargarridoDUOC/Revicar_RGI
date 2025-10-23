@@ -95,7 +95,7 @@ fun BuyerInspectionDetailScreen(
                         Spacer(Modifier.height(24.dp))
 
                         Text("Detalles de la Cita", style = MaterialTheme.typography.titleMedium)
-                        Divider(modifier = Modifier.padding(vertical = 8.dp))
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                         Text("Fecha: ${inspection.dateMillis?.let { convertMillisToDate(it) }}")
                         Text("Hora: ${inspection.time}")
                         Text("Lugar: ${inspection.direccion}, ${inspection.comuna}")
@@ -103,7 +103,8 @@ fun BuyerInspectionDetailScreen(
                         Spacer(Modifier.height(24.dp))
 
                         Text("Servicio Solicitado", style = MaterialTheme.typography.titleMedium)
-                        Divider(modifier = Modifier.padding(vertical = 8.dp))
+
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                         Text(inspection.serviceType)
                         Text(
                             text = formatPrice(inspection.servicePrice),
@@ -115,7 +116,7 @@ fun BuyerInspectionDetailScreen(
 
                         if (inspection.status == "ASIGNADO" || inspection.status == "FINALIZADO") {
                             Text("Mecánico Asignado", style = MaterialTheme.typography.titleMedium)
-                            Divider(modifier = Modifier.padding(vertical = 8.dp))
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
                             if (uiState.mechanic != null) {
                                 val mechanic = uiState.mechanic!!
