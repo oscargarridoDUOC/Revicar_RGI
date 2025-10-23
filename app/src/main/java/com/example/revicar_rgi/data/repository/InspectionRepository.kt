@@ -152,4 +152,18 @@ class InspectionRepository {
             Result.failure(Exception(e.message ?: "Error al finalizar el trabajo"))
         }
     }
+    suspend fun getInspectionById(inspectionId: String): Result<Inspection> {
+        return try {
+            val document = inspectionsCollection.document(inspectionId).get().await()
+            val inspection = document.toObject(Inspection::class.java)
+
+            if (inspection != null) {
+                Result.success(inspection)
+            } else {
+                Result.failure(Exception("Inspección no encontrada."))
+            }
+        } catch (e: Exception) {
+            Result.failure(Exception("Error al obtener la inspección: ${e.message}"))
+        }
+    }
 }

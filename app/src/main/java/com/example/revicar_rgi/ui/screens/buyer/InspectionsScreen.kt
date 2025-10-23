@@ -13,11 +13,16 @@ import androidx.compose.ui.unit.dp
 import com.example.revicar_rgi.data.model.Inspection
 import com.example.revicar_rgi.ui.viewmodel.InspectionsViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.example.revicar_rgi.navigation.AppRoutes
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun InspectionsScreen(viewModel: InspectionsViewModel = viewModel()) {
+fun InspectionsScreen(
+    viewModel: InspectionsViewModel = viewModel(),
+    navController: NavController
+) {
     val uiState by viewModel.uiState.collectAsState()
 
     fun convertMillisToDate(millis: Long): String {
@@ -66,7 +71,10 @@ fun InspectionsScreen(viewModel: InspectionsViewModel = viewModel()) {
                 uiState.inspections.forEach { inspection ->
                     InspectionCard(
                         inspection = inspection,
-                        dateFormateada = inspection.dateMillis?.let { convertMillisToDate(it) } ?: "N/A"
+                        dateFormateada = inspection.dateMillis?.let { convertMillisToDate(it) } ?: "N/A",
+                        onClick = {
+                            navController.navigate("${AppRoutes.BUYER_INSPECTION_DETAIL_ROUTE}/${inspection.id}")
+                        }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                 }
@@ -77,9 +85,14 @@ fun InspectionsScreen(viewModel: InspectionsViewModel = viewModel()) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InspectionCard(inspection: Inspection, dateFormateada: String) {
+fun InspectionCard(
+    inspection: Inspection,
+    dateFormateada: String,
+    onClick: () -> Unit
+) {
     Card(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onClick
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(

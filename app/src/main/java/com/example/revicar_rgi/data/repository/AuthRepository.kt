@@ -96,7 +96,19 @@ class AuthRepository(context: Context) {
             Result.failure(Exception(spanishMessage))
         }
     }
-
+    suspend fun getUserById(uid: String): Result<com.example.revicar_rgi.data.model.User> {
+        return try {
+            val document = firestore.collection("users").document(uid).get().await()
+            val user = document.toObject(com.example.revicar_rgi.data.model.User::class.java)
+            if (user != null) {
+                Result.success(user)
+            } else {
+                Result.failure(Exception("Usuario no encontrado."))
+            }
+        } catch (e: Exception) {
+            Result.failure(Exception("Error al obtener datos del usuario: ${e.message}"))
+        }
+    }
     suspend fun logout() {
         auth.signOut()
         sessionManager.clearSession()

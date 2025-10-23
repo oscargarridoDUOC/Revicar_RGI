@@ -14,4 +14,11 @@ object AppRoutes {
     const val NOTIFICATIONS_SCREEN = "notifications_screen"
 
     const val INSPECTION_FORM_SCREEN = "inspection_form_screen"
+
+    const val BUYER_INSPECTION_DETAIL = "buyer_inspection_detail/{inspectionId}"
+    const val MECHANIC_INSPECTION_DETAIL = "mechanic_inspection_detail/{inspectionId}"
+
+
+    const val BUYER_INSPECTION_DETAIL_ROUTE = "buyer_inspection_detail"
+    const val MECHANIC_INSPECTION_DETAIL_ROUTE = "mechanic_inspection_detail"
 }
