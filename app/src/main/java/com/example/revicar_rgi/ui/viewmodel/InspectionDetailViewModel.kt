@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 class InspectionDetailViewModel(
@@ -23,22 +24,23 @@ class InspectionDetailViewModel(
     fun loadDetails(inspectionId: String) {
         _uiState.update { it.copy(isLoading = true, error = null, actionSuccess = false) }
         viewModelScope.launch {
-            val inspectionResult = inspectionRepository.getInspectionById(inspectionId)
-
-            inspectionResult.fold(
-                onSuccess = { inspection ->
-                    _uiState.update { it.copy(inspection = inspection) }
-
-                    if (inspection.mechanicId != null) {
-                        loadMechanicDetails(inspection.mechanicId)
-                    } else {
-                        _uiState.update { it.copy(isLoading = false) }
-                    }
-                },
-                onFailure = { error ->
+            inspectionRepository.getInspectionByIdFlow(inspectionId)
+                .catch { error ->
                     _uiState.update { it.copy(isLoading = false, error = error.message) }
                 }
-            )
+                .collect { inspection ->
+                    if (inspection != null) {
+                        _uiState.update { it.copy(inspection = inspection) }
+
+                        if (inspection.mechanicId != null) {
+                            loadMechanicDetails(inspection.mechanicId)
+                        } else {
+                            _uiState.update { it.copy(isLoading = false) }
+                        }
+                    } else {
+                        _uiState.update { it.copy(isLoading = false, error = "Inspección no encontrada") }
+                    }
+                }
         }
     }
 

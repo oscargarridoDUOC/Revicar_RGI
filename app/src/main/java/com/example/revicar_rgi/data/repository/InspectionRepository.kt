@@ -8,6 +8,10 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObjects
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.channels.awaitClose
+import com.google.firebase.firestore.ListenerRegistration
 
 class InspectionRepository {
 
@@ -165,5 +169,94 @@ class InspectionRepository {
         } catch (e: Exception) {
             Result.failure(Exception("Error al obtener la inspección: ${e.message}"))
         }
+    }
+
+    // Métodos Flow para actualizaciones en tiempo real
+    fun getMyInspectionsFlow(): Flow<List<Inspection>> = callbackFlow {
+        val userId = auth.currentUser?.uid
+        if (userId == null) {
+            close(Exception("Usuario no autenticado."))
+            return@callbackFlow
+        }
+
+        val listener = inspectionsCollection
+            .whereEqualTo("userId", userId)
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null) {
+                    val inspections = snapshot.toObjects<Inspection>()
+                    trySend(inspections)
+                }
+            }
+
+        awaitClose { listener.remove() }
+    }
+
+    fun getAvailableInspectionsFlow(): Flow<List<Inspection>> = callbackFlow {
+        val listener = inspectionsCollection
+            .whereEqualTo("status", "PENDIENTE")
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null) {
+                    val inspections = snapshot.toObjects<Inspection>()
+                    trySend(inspections)
+                }
+            }
+
+        awaitClose { listener.remove() }
+    }
+
+    fun getMyJobsFlow(): Flow<List<Inspection>> = callbackFlow {
+        val mechanicId = auth.currentUser?.uid
+        if (mechanicId == null) {
+            close(Exception("Mecánico no autenticado."))
+            return@callbackFlow
+        }
+
+        val listener = inspectionsCollection
+            .whereEqualTo("mechanicId", mechanicId)
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null) {
+                    val inspections = snapshot.toObjects<Inspection>()
+                    trySend(inspections)
+                }
+            }
+
+        awaitClose { listener.remove() }
+    }
+
+    fun getInspectionByIdFlow(inspectionId: String): Flow<Inspection?> = callbackFlow {
+        val listener = inspectionsCollection.document(inspectionId)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null && snapshot.exists()) {
+                    val inspection = snapshot.toObject(Inspection::class.java)
+                    trySend(inspection)
+                } else {
+                    trySend(null)
+                }
+            }
+
+        awaitClose { listener.remove() }
     }
 }

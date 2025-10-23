@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 data class InspectionsUiState(
@@ -39,18 +40,8 @@ class InspectionsViewModel(
         _uiState.update { it.copy(isLoading = true, error = null) }
 
         viewModelScope.launch {
-            val result = repository.getMyInspections()
-
-            result.fold(
-                onSuccess = { inspectionList ->
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            inspections = inspectionList
-                        )
-                    }
-                },
-                onFailure = { error ->
+            repository.getMyInspectionsFlow()
+                .catch { error ->
                     _uiState.update {
                         it.copy(
                             isLoading = false,
@@ -58,7 +49,15 @@ class InspectionsViewModel(
                         )
                     }
                 }
-            )
+                .collect { inspectionList ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            inspections = inspectionList,
+                            error = null
+                        )
+                    }
+                }
         }
     }
 }

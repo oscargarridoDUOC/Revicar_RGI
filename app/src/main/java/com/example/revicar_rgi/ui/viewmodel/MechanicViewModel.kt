@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 class MechanicViewModel(
@@ -29,38 +30,34 @@ class MechanicViewModel(
     fun loadAvailableJobs() {
         _uiState.update { it.copy(isLoading = true, error = null) }
         viewModelScope.launch {
-            val result = repository.getAvailableInspections()
-            result.fold(
-                onSuccess = { jobs ->
-                    _uiState.update {
-                        it.copy(isLoading = false, availableJobs = jobs)
-                    }
-                },
-                onFailure = { error ->
+            repository.getAvailableInspectionsFlow()
+                .catch { error ->
                     _uiState.update {
                         it.copy(isLoading = false, error = error.message)
                     }
                 }
-            )
+                .collect { jobs ->
+                    _uiState.update {
+                        it.copy(isLoading = false, availableJobs = jobs, error = null)
+                    }
+                }
         }
     }
 
     fun loadMyJobs() {
         _uiState.update { it.copy(isLoading = true, error = null) }
         viewModelScope.launch {
-            val result = repository.getMyJobs()
-            result.fold(
-                onSuccess = { jobs ->
-                    _uiState.update {
-                        it.copy(isLoading = false, myJobs = jobs)
-                    }
-                },
-                onFailure = { error ->
+            repository.getMyJobsFlow()
+                .catch { error ->
                     _uiState.update {
                         it.copy(isLoading = false, error = error.message)
                     }
                 }
-            )
+                .collect { jobs ->
+                    _uiState.update {
+                        it.copy(isLoading = false, myJobs = jobs, error = null)
+                    }
+                }
         }
     }
 
