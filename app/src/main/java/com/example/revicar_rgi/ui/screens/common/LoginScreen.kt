@@ -1,6 +1,5 @@
 package com.example.revicar_rgi.ui.screens.common
 
-import android.util.Patterns
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -10,10 +9,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.revicar_rgi.ui.viewmodel.AuthState
 import com.example.revicar_rgi.ui.viewmodel.AuthViewModel
+import com.example.revicar_rgi.utils.ValidationUtils
 
-private fun isValidEmail(email: String): Boolean {
-    return email.isNotBlank() && Patterns.EMAIL_ADDRESS.matcher(email).matches()
-}
 
 @Composable
 fun LoginScreen(
@@ -84,7 +81,7 @@ fun LoginScreen(
                 validationError = null
                 if (email.isBlank() || password.isBlank()) {
                     validationError = "El email y la contraseña son obligatorios."
-                } else if (!isValidEmail(email.trim())) {
+                } else if (!ValidationUtils.isValidEmail(email.trim())) {
                     validationError = "El formato del email no es válido."
                 } else {
                     authViewModel.login(email.trim(), password.trim())

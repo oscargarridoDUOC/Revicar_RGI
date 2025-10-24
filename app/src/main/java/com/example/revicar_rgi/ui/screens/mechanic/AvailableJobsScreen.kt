@@ -10,8 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.revicar_rgi.data.model.Inspection
+import com.example.revicar_rgi.utils.ValidationUtils
 import java.text.NumberFormat
-import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
@@ -30,13 +30,17 @@ fun AvailableJobsScreen(
                 Text(
                     text = "Error: $error",
                     color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.align(Alignment.Center).padding(16.dp)
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(16.dp)
                 )
             }
             jobs.isEmpty() -> {
                 Text(
                     text = "No hay trabajos disponibles por el momento.",
-                    modifier = Modifier.align(Alignment.Center).padding(16.dp)
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(16.dp)
                 )
             }
             else -> {
@@ -58,10 +62,6 @@ fun AvailableJobsScreen(
 @Composable
 fun JobCard(job: Inspection, onClick: () -> Unit) {
 
-    fun convertMillisToDate(millis: Long): String {
-        val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        return formatter.format(Date(millis))
-    }
 
     val currencyFormat = NumberFormat.getCurrencyInstance(Locale("es", "CL"))
     currencyFormat.maximumFractionDigits = 0
@@ -82,7 +82,7 @@ fun JobCard(job: Inspection, onClick: () -> Unit) {
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = "Cita: ${job.dateMillis?.let { convertMillisToDate(it) }} a las ${job.time}",
+                text = "Cita: ${job.dateMillis?.let { ValidationUtils.convertMillisToDate(it) }} a las ${job.time}",
                 style = MaterialTheme.typography.bodyMedium
             )
             Spacer(modifier = Modifier.height(8.dp))

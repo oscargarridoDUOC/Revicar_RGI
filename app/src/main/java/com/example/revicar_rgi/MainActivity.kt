@@ -84,46 +84,6 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    composable(AppRoutes.SPLASH_SCREEN) {
-                        SplashScreen(
-                            authViewModel = authViewModel,
-                            onNavigate = { route ->
-                                navController.navigate(route) {
-                                    popUpTo(AppRoutes.SPLASH_SCREEN) { inclusive = true }
-                                }
-                            }
-                        )
-                    }
-
-                    composable(AppRoutes.LOGIN_SCREEN) {
-                        LoginScreen(
-                            authViewModel = authViewModel,
-                            onSuccessNavigation = { isMechanic ->
-                                val route = if (isMechanic) AppRoutes.MECHANIC_HOME_SCREEN else AppRoutes.MAIN_APP_SCREEN
-                                navController.navigate(route) {
-                                    popUpTo(AppRoutes.LOGIN_SCREEN) { inclusive = true }
-                                }
-                            },
-                            onNavigateToRegister = { navController.navigate(AppRoutes.REGISTER_SCREEN) }
-                        )
-                    }
-
-                    composable(AppRoutes.REGISTER_SCREEN) {
-                        RegisterScreen(
-                            authViewModel = authViewModel,
-                            onSuccessNavigation = { isMechanic ->
-                                val route = if (isMechanic) AppRoutes.MECHANIC_HOME_SCREEN else AppRoutes.MAIN_APP_SCREEN
-                                navController.navigate(route) {
-                                    popUpTo(AppRoutes.REGISTER_SCREEN) { inclusive = true }
-                                    navController.graph.findNode(AppRoutes.LOGIN_SCREEN)?.id?.let {
-                                        navController.popBackStack(it, true)
-                                    }
-                                }
-                            },
-                            onNavigateToLogin = { navController.popBackStack() }
-                        )
-                    }
-
                     composable(AppRoutes.MAIN_APP_SCREEN) {
                         MainAppScreen(authViewModel = authViewModel, navControllerApp = navController)
                     }

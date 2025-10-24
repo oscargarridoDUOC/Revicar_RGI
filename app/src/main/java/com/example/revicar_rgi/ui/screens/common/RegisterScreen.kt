@@ -1,6 +1,5 @@
 package com.example.revicar_rgi.ui.screens.common
 
-import android.util.Patterns
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -13,10 +12,8 @@ import androidx.compose.ui.unit.dp
 import com.example.revicar_rgi.ui.components.PhoneNumberInput
 import com.example.revicar_rgi.ui.viewmodel.AuthState
 import com.example.revicar_rgi.ui.viewmodel.AuthViewModel
+import com.example.revicar_rgi.utils.ValidationUtils
 
-private fun isValidEmail(email: String): Boolean {
-    return email.isNotBlank() && Patterns.EMAIL_ADDRESS.matcher(email).matches()
-}
 
 @Composable
 fun RegisterScreen(
@@ -171,7 +168,7 @@ fun RegisterScreen(
                     validationError = "Todos los campos con * son obligatorios."
                 } else if (!isRunFormatValid) {
                     validationError = "El formato del RUN no es válido (ej: 12345678-k)."
-                } else if (!isValidEmail(email.trim())) {
+                } else if (!ValidationUtils.isValidEmail(email.trim())) {
                     validationError = "El formato del email no es válido."
                 } else if (password.length < 6 || password.length > 12) {
                     validationError = "La contraseña debe tener entre 6 y 12 caracteres."

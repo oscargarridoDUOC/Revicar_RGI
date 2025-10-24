@@ -1,23 +1,17 @@
 package com.example.revicar_rgi.ui.screens.mechanic
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.revicar_rgi.navigation.AppRoutes
 import com.example.revicar_rgi.ui.viewmodel.AuthViewModel
 import com.example.revicar_rgi.ui.viewmodel.MechanicViewModel
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,7 +24,6 @@ fun MechanicHomeScreen(
     val tabs = listOf("Trabajos Disponibles", "Mis Trabajos")
 
     val uiState by mechanicViewModel.uiState.collectAsState()
-    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {

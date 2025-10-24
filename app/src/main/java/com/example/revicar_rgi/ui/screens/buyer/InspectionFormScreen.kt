@@ -16,9 +16,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.revicar_rgi.ui.viewmodel.InspectionFormViewModel
+import com.example.revicar_rgi.utils.ValidationUtils
 import kotlinx.coroutines.delay
-import java.text.SimpleDateFormat
-import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,7 +61,7 @@ fun InspectionFormScreen(
 
             Box {
                 OutlinedTextField(
-                    value = uiState.dateMillis?.let { convertMillisToDate(it) } ?: "",
+                    value = uiState.dateMillis?.let { ValidationUtils.convertMillisToDate(it) } ?: "",
                     onValueChange = {},
                     label = { Text("Fecha") },
                     trailingIcon = {
@@ -215,7 +214,7 @@ fun InspectionFormScreen(
 
                 if (uiState.isSubmitted) {
                     uiState.dateMillis?.let { fechaEnMillis ->
-                        val fechaFormateada = convertMillisToDate(fechaEnMillis)
+                        val fechaFormateada = ValidationUtils.convertMillisToDate(fechaEnMillis)
                         val mensajeExito =
                             "¡Éxito! Hora reservada a las ${uiState.time} del $fechaFormateada."
 
@@ -323,9 +322,4 @@ private fun TimePickerModal(
             }
         }
     }
-}
-
-private fun convertMillisToDate(millis: Long): String {
-    val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    return formatter.format(Date(millis))
 }

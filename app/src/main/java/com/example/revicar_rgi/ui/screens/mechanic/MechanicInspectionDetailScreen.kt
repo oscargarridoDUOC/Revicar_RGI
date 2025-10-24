@@ -16,8 +16,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.revicar_rgi.ui.viewmodel.InspectionDetailViewModel
+import com.example.revicar_rgi.utils.ValidationUtils
 import java.text.NumberFormat
-import java.text.SimpleDateFormat
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,10 +39,6 @@ fun MechanicInspectionDetailScreen(
         }
     }
 
-    fun convertMillisToDate(millis: Long): String {
-        val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        return formatter.format(Date(millis))
-    }
 
     fun formatPrice(price: Double): String {
         val currencyFormat = NumberFormat.getCurrencyInstance(Locale("es", "CL"))
@@ -114,7 +110,7 @@ fun MechanicInspectionDetailScreen(
 
                         Text("Detalles de la Cita", style = MaterialTheme.typography.titleMedium)
                         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                        Text("Fecha: ${inspection.dateMillis?.let { convertMillisToDate(it) }}")
+                        Text("Fecha: ${inspection.dateMillis?.let { ValidationUtils.convertMillisToDate(it) }}")
                         Text("Hora: ${inspection.time}")
                         Text("Lugar: ${inspection.direccion}, ${inspection.comuna}")
 

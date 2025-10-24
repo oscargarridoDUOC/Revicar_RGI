@@ -12,11 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.revicar_rgi.data.model.Inspection
 import com.example.revicar_rgi.ui.viewmodel.InspectionsViewModel
+import com.example.revicar_rgi.utils.ValidationUtils
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.revicar_rgi.navigation.AppRoutes
-import java.text.SimpleDateFormat
-import java.util.*
 
 @Composable
 fun InspectionsScreen(
@@ -25,10 +24,6 @@ fun InspectionsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    fun convertMillisToDate(millis: Long): String {
-        val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        return formatter.format(Date(millis))
-    }
 
     Column(
         modifier = Modifier
@@ -71,7 +66,7 @@ fun InspectionsScreen(
                 uiState.inspections.forEach { inspection ->
                     InspectionCard(
                         inspection = inspection,
-                        dateFormateada = inspection.dateMillis?.let { convertMillisToDate(it) } ?: "N/A",
+                        dateFormateada = inspection.dateMillis?.let { ValidationUtils.convertMillisToDate(it) } ?: "N/A",
                         onClick = {
                             navController.navigate("${AppRoutes.BUYER_INSPECTION_DETAIL_ROUTE}/${inspection.id}")
                         }
