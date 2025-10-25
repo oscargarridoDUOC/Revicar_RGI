@@ -3,6 +3,7 @@ package com.example.revicar_rgi.ui.screens.buyer
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
@@ -11,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -18,6 +20,8 @@ import androidx.navigation.NavHostController
 import com.example.revicar_rgi.ui.viewmodel.InspectionFormViewModel
 import com.example.revicar_rgi.utils.ValidationUtils
 import kotlinx.coroutines.delay
+import androidx.compose.material3.SelectableDates
+import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -108,26 +112,42 @@ fun InspectionFormScreen(
 
             OutlinedTextField(
                 value = uiState.make,
-                onValueChange = viewModel::updateMake,
+                onValueChange = { newValue ->
+                    if (newValue.length <= 20 && newValue.all { it.isLetter() || it.isWhitespace() }) {
+                        viewModel.updateMake(newValue)
+                    }
+                },
                 label = { Text("Marca") },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isLoading && !uiState.isSubmitted
+                enabled = !uiState.isLoading && !uiState.isSubmitted,
+                singleLine = true
             )
             Spacer(Modifier.height(8.dp))
             OutlinedTextField(
                 value = uiState.model,
-                onValueChange = viewModel::updateModel,
+                onValueChange = { newValue ->
+                    if (newValue.length <= 50 && newValue.all { it.isLetterOrDigit() || it.isWhitespace() }) {
+                        viewModel.updateModel(newValue)
+                    }
+                },
                 label = { Text("Modelo") },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isLoading && !uiState.isSubmitted
+                enabled = !uiState.isLoading && !uiState.isSubmitted,
+                singleLine = true
             )
             Spacer(Modifier.height(8.dp))
             OutlinedTextField(
                 value = uiState.year,
-                onValueChange = viewModel::updateYear,
+                onValueChange = { newYearValue ->
+                    if (newYearValue.length <= 4 && newYearValue.all { it.isDigit() }) {
+                        viewModel.updateYear(newYearValue)
+                    }
+                },
                 label = { Text("Año") },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isLoading && !uiState.isSubmitted
+                enabled = !uiState.isLoading && !uiState.isSubmitted,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                singleLine = true
             )
 
             Spacer(Modifier.height(24.dp))
@@ -135,7 +155,11 @@ fun InspectionFormScreen(
 
             OutlinedTextField(
                 value = uiState.comuna,
-                onValueChange = viewModel::updateComuna,
+                onValueChange = { newValue ->
+                    if (newValue.length <= 20 && newValue.all { it.isLetter() || it.isWhitespace() }) {
+                        viewModel.updateComuna(newValue)
+                    }
+                },
                 label = { Text("Comuna") },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading && !uiState.isSubmitted,
@@ -144,7 +168,11 @@ fun InspectionFormScreen(
             Spacer(Modifier.height(8.dp))
             OutlinedTextField(
                 value = uiState.direccion,
-                onValueChange = viewModel::updateDireccion,
+                onValueChange = { newValue ->
+                    if (newValue.length <= 100 && newValue.all { it.isLetterOrDigit() || it.isWhitespace() || it == '#' || it == '.' }) {
+                        viewModel.updateDireccion(newValue)
+                    }
+                },
                 label = { Text("Dirección (Calle y Número)") },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading && !uiState.isSubmitted,
@@ -266,7 +294,23 @@ private fun DatePickerModal(
     onDateSelected: (Long?) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val datePickerState = rememberDatePickerState()
+    val todayStartMillis = remember {
+        Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
+    }
+
+    val datePickerState = rememberDatePickerState(
+        selectableDates = object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                return utcTimeMillis >= todayStartMillis
+            }
+        }
+    )
+
     DatePickerDialog(
         onDismissRequest = onDismiss,
         confirmButton = {

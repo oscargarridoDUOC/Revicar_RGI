@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.revicar_rgi.ui.viewmodel.InspectionDetailViewModel
 import com.example.revicar_rgi.utils.ValidationUtils
@@ -43,7 +44,7 @@ fun BuyerInspectionDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Detalle de Inspección") },
+                title = { Text("Detalle de Inspección", fontSize = 20.sp) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
