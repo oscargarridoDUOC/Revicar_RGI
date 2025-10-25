@@ -10,12 +10,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.revicar_rgi.data.model.Inspection
-import com.example.revicar_rgi.ui.viewmodel.InspectionsViewModel
-import com.example.revicar_rgi.utils.ValidationUtils
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.revicar_rgi.navigation.AppRoutes
+import com.example.revicar_rgi.ui.components.InspectionCard
+import com.example.revicar_rgi.ui.components.UserType
+import com.example.revicar_rgi.ui.viewmodel.InspectionsViewModel
 
 @Composable
 fun InspectionsScreen(
@@ -66,52 +66,18 @@ fun InspectionsScreen(
                 uiState.inspections.forEach { inspection ->
                     InspectionCard(
                         inspection = inspection,
-                        dateFormateada = inspection.dateMillis?.let { ValidationUtils.convertMillisToDate(it) } ?: "N/A",
-                        onClick = {
+                        userType = UserType.BUYER,
+                        mechanicName = null,
+                        onCardClick = {
+                            navController.navigate("${AppRoutes.BUYER_INSPECTION_DETAIL_ROUTE}/${inspection.id}")
+                        },
+                        onButtonClick = {
                             navController.navigate("${AppRoutes.BUYER_INSPECTION_DETAIL_ROUTE}/${inspection.id}")
                         }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                 }
             }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun InspectionCard(
-    inspection: Inspection,
-    dateFormateada: String,
-    onClick: () -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = onClick
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = "${inspection.make} ${inspection.model} (${inspection.year})",
-                style = MaterialTheme.typography.titleMedium
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "Lugar: ${inspection.direccion}, ${inspection.comuna}",
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Text(
-                text = "Cita: $dateFormateada a las ${inspection.time}",
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Servicio: ${inspection.serviceType}",
-                style = MaterialTheme.typography.bodySmall
-            )
-            Text(
-                text = "Estado: ${inspection.status}",
-                style = MaterialTheme.typography.bodyMedium
-            )
         }
     }
 }

@@ -9,6 +9,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.revicar_rgi.data.model.Inspection
+import com.example.revicar_rgi.ui.components.InspectionCard
+import com.example.revicar_rgi.ui.components.UserType
 
 @Composable
 fun MyJobsScreen(
@@ -42,7 +44,14 @@ fun MyJobsScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(jobs) { job ->
-                        JobCard(job = job, onClick = { onJobClick(job.id) })
+                        InspectionCard(
+                            inspection = job,
+                            userType = UserType.MECHANIC,
+                            onCardClick = { onJobClick(job.id) },
+                            onButtonClick = {
+                                onJobClick(job.id)
+                            }
+                        )
                     }
                 }
             }
