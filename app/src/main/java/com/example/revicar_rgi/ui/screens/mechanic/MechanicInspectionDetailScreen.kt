@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.revicar_rgi.navigation.AppRoutes
 import com.example.revicar_rgi.ui.viewmodel.InspectionDetailViewModel
 import com.example.revicar_rgi.utils.ValidationUtils
 import java.text.NumberFormat
@@ -38,7 +39,6 @@ fun MechanicInspectionDetailScreen(
             navController.popBackStack()
         }
     }
-
 
     fun formatPrice(price: Double): String {
         val currencyFormat = NumberFormat.getCurrencyInstance(Locale("es", "CL"))
@@ -134,7 +134,9 @@ fun MechanicInspectionDetailScreen(
                             }
                             "ASIGNADO" -> {
                                 Button(
-                                    onClick = { viewModel.completeJob(inspectionId) },
+                                    onClick = {
+                                        navController.navigate("${AppRoutes.INSPECTION_REPORT_SCREEN.split('/')[0]}/$inspectionId")
+                                    },
                                     modifier = Modifier.fillMaxWidth(),
                                     enabled = !uiState.isLoading,
                                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)

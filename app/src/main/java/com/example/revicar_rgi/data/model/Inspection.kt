@@ -20,5 +20,6 @@ data class Inspection(
     val servicePrice: Double = 0.0,
     val status: String = "PENDIENTE",
     @ServerTimestamp
-    val timestamp: Date? = null
+    val timestamp: Date? = null,
+    val reportText: String? = null
 )

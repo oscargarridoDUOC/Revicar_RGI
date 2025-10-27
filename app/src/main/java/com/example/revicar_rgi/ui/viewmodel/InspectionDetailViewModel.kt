@@ -74,22 +74,6 @@ class InspectionDetailViewModel(
         }
     }
 
-    fun completeJob(inspectionId: String) {
-        _uiState.update { it.copy(isLoading = true, error = null) }
-        viewModelScope.launch {
-            val result = inspectionRepository.completeInspection(inspectionId)
-            result.fold(
-                onSuccess = {
-                    _uiState.update { it.copy(actionSuccess = true) }
-                    loadDetails(inspectionId)
-                },
-                onFailure = { error ->
-                    _uiState.update { it.copy(isLoading = false, error = error.message) }
-                }
-            )
-        }
-    }
-
     class Factory(
         private val inspectionRepository: InspectionRepository,
         private val authRepository: AuthRepository

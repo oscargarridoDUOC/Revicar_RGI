@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.revicar_rgi.navigation.AppRoutes
 import com.example.revicar_rgi.ui.viewmodel.InspectionDetailViewModel
 import com.example.revicar_rgi.utils.ValidationUtils
 import java.text.NumberFormat
@@ -129,7 +130,9 @@ fun BuyerInspectionDetailScreen(
 
                         if (inspection.status == "FINALIZADO") {
                             Button(
-                                onClick = { },
+                                onClick = {
+                                    navController.navigate("${AppRoutes.BUYER_REPORT_ROUTE}/${inspection.id}")
+                                },
                                 modifier = Modifier.fillMaxWidth(),
                                 enabled = true
                             ) {

@@ -21,10 +21,12 @@ import com.example.revicar_rgi.navigation.AppRoutes
 import com.example.revicar_rgi.navigation.BottomBar
 import com.example.revicar_rgi.ui.screens.buyer.BuyerHomeScreen
 import com.example.revicar_rgi.ui.screens.buyer.BuyerInspectionDetailScreen
+import com.example.revicar_rgi.ui.screens.buyer.BuyerReportScreen
 import com.example.revicar_rgi.ui.screens.buyer.InspectionFormScreen
 import com.example.revicar_rgi.ui.screens.buyer.InspectionsScreen
 import com.example.revicar_rgi.ui.screens.common.NotificationsScreen
 import com.example.revicar_rgi.ui.viewmodel.AuthViewModel
+import com.example.revicar_rgi.ui.viewmodel.BuyerReportViewModel
 import com.example.revicar_rgi.ui.viewmodel.InspectionDetailViewModel
 import com.example.revicar_rgi.ui.viewmodel.InspectionsViewModel
 import com.example.revicar_rgi.ui.viewmodel.NotificationsViewModel
@@ -93,6 +95,24 @@ fun MainAppScreen(authViewModel: AuthViewModel, navControllerApp: NavHostControl
                     BuyerInspectionDetailScreen(
                         inspectionId = inspectionId,
                         viewModel = detailViewModel,
+                        navController = navController
+                    )
+                }
+            }
+
+            composable(
+                route = AppRoutes.BUYER_REPORT_SCREEN,
+                arguments = listOf(navArgument("inspectionId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val inspectionId = backStackEntry.arguments?.getString("inspectionId")
+
+                val factory = BuyerReportViewModel.Factory(inspectionRepository)
+                val reportViewModel: BuyerReportViewModel = viewModel(factory = factory)
+
+                if (inspectionId != null) {
+                    BuyerReportScreen(
+                        inspectionId = inspectionId,
+                        viewModel = reportViewModel,
                         navController = navController
                     )
                 }

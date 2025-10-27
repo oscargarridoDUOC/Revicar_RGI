@@ -61,37 +61,4 @@ class MechanicViewModel(
         }
     }
 
-    fun acceptJob(inspectionId: String) {
-        _uiState.update { it.copy(isLoading = true, error = null) }
-        viewModelScope.launch {
-            val result = repository.acceptInspection(inspectionId)
-            result.fold(
-                onSuccess = {
-                    loadAllJobs()
-                },
-                onFailure = { error ->
-                    _uiState.update {
-                        it.copy(isLoading = false, error = error.message)
-                    }
-                }
-            )
-        }
-    }
-
-    fun completeJob(inspectionId: String) {
-        _uiState.update { it.copy(isLoading = true, error = null) }
-        viewModelScope.launch {
-            val result = repository.completeInspection(inspectionId)
-            result.fold(
-                onSuccess = {
-                    loadMyJobs()
-                },
-                onFailure = { error ->
-                    _uiState.update {
-                        it.copy(isLoading = false, error = error.message)
-                    }
-                }
-            )
-        }
-    }
 }

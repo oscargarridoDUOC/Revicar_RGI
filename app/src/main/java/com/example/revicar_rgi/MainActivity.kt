@@ -17,12 +17,14 @@ import com.example.revicar_rgi.navigation.AppRoutes
 import com.example.revicar_rgi.ui.screens.MainAppScreen
 import com.example.revicar_rgi.ui.screens.common.LoginScreen
 import com.example.revicar_rgi.ui.screens.common.RegisterScreen
+import com.example.revicar_rgi.ui.screens.mechanic.InspectionReportScreen
 import com.example.revicar_rgi.ui.screens.mechanic.MechanicHomeScreen
 import com.example.revicar_rgi.ui.screens.mechanic.MechanicInspectionDetailScreen
 import com.example.revicar_rgi.ui.theme.Revicar_RGITheme
 import com.example.revicar_rgi.ui.viewmodel.AuthViewModel
 import com.example.revicar_rgi.ui.viewmodel.AuthViewModelFactory
 import com.example.revicar_rgi.ui.viewmodel.InspectionDetailViewModel
+import com.example.revicar_rgi.ui.viewmodel.InspectionReportViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,7 +61,8 @@ class MainActivity : ComponentActivity() {
                         LoginScreen(
                             authViewModel = authViewModel,
                             onSuccessNavigation = { isMechanic ->
-                                val route = if (isMechanic) AppRoutes.MECHANIC_HOME_SCREEN else AppRoutes.MAIN_APP_SCREEN
+                                val route =
+                                    if (isMechanic) AppRoutes.MECHANIC_HOME_SCREEN else AppRoutes.MAIN_APP_SCREEN
                                 navController.navigate(route) {
                                     popUpTo(AppRoutes.LOGIN_SCREEN) { inclusive = true }
                                 }
@@ -72,7 +75,8 @@ class MainActivity : ComponentActivity() {
                         RegisterScreen(
                             authViewModel = authViewModel,
                             onSuccessNavigation = { isMechanic ->
-                                val route = if (isMechanic) AppRoutes.MECHANIC_HOME_SCREEN else AppRoutes.MAIN_APP_SCREEN
+                                val route =
+                                    if (isMechanic) AppRoutes.MECHANIC_HOME_SCREEN else AppRoutes.MAIN_APP_SCREEN
                                 navController.navigate(route) {
                                     popUpTo(AppRoutes.REGISTER_SCREEN) { inclusive = true }
                                     navController.graph.findNode(AppRoutes.LOGIN_SCREEN)?.id?.let {
@@ -85,7 +89,10 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable(AppRoutes.MAIN_APP_SCREEN) {
-                        MainAppScreen(authViewModel = authViewModel, navControllerApp = navController)
+                        MainAppScreen(
+                            authViewModel = authViewModel,
+                            navControllerApp = navController
+                        )
                     }
 
                     composable(AppRoutes.MECHANIC_HOME_SCREEN) {
@@ -97,17 +104,42 @@ class MainActivity : ComponentActivity() {
 
                     composable(
                         route = AppRoutes.MECHANIC_INSPECTION_DETAIL,
-                        arguments = listOf(navArgument("inspectionId") { type = NavType.StringType })
+                        arguments = listOf(navArgument("inspectionId") {
+                            type = NavType.StringType
+                        })
                     ) { backStackEntry ->
                         val inspectionId = backStackEntry.arguments?.getString("inspectionId")
 
-                        val factory = InspectionDetailViewModel.Factory(inspectionRepository, repository)
-                        val detailViewModel: InspectionDetailViewModel = viewModel(factory = factory)
+                        val factory =
+                            InspectionDetailViewModel.Factory(inspectionRepository, repository)
+                        val detailViewModel: InspectionDetailViewModel =
+                            viewModel(factory = factory)
 
                         if (inspectionId != null) {
                             MechanicInspectionDetailScreen(
                                 inspectionId = inspectionId,
                                 viewModel = detailViewModel,
+                                navController = navController
+                            )
+                        }
+                    }
+
+                    composable(
+                        route = AppRoutes.INSPECTION_REPORT_SCREEN,
+                        arguments = listOf(navArgument("inspectionId") {
+                            type = NavType.StringType
+                        })
+                    ) { backStackEntry ->
+                        val inspectionId = backStackEntry.arguments?.getString("inspectionId")
+
+                        val factory = InspectionReportViewModel.Factory(inspectionRepository)
+                        val reportViewModel: InspectionReportViewModel =
+                            viewModel(factory = factory)
+
+                        if (inspectionId != null) {
+                            InspectionReportScreen(
+                                inspectionId = inspectionId,
+                                viewModel = reportViewModel,
                                 navController = navController
                             )
                         }

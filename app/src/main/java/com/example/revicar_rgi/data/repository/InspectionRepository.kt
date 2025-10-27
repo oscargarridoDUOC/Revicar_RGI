@@ -11,7 +11,6 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.channels.awaitClose
-import com.google.firebase.firestore.ListenerRegistration
 
 class InspectionRepository {
 
@@ -58,60 +57,6 @@ class InspectionRepository {
         }
     }
 
-    suspend fun getMyInspections(): Result<List<Inspection>> {
-        return try {
-            val userId = auth.currentUser?.uid
-                ?: return Result.failure(Exception("Usuario no autenticado."))
-
-            val querySnapshot = inspectionsCollection
-                .whereEqualTo("userId", userId)
-                .orderBy("timestamp", Query.Direction.DESCENDING)
-                .get()
-                .await()
-
-            val inspections = querySnapshot.toObjects<Inspection>()
-
-            Result.success(inspections)
-
-        } catch (e: Exception) {
-            Result.failure(Exception("Error al obtener las inspecciones: ${e.message}"))
-        }
-    }
-
-    suspend fun getAvailableInspections(): Result<List<Inspection>> {
-        return try {
-            val querySnapshot = inspectionsCollection
-                .whereEqualTo("status", "PENDIENTE")
-                .orderBy("timestamp", Query.Direction.DESCENDING)
-                .get()
-                .await()
-
-            val inspections = querySnapshot.toObjects<Inspection>()
-            Result.success(inspections)
-
-        } catch (e: Exception) {
-            Result.failure(Exception("Error al obtener trabajos disponibles: ${e.message}"))
-        }
-    }
-
-    suspend fun getMyJobs(): Result<List<Inspection>> {
-        return try {
-            val mechanicId = auth.currentUser?.uid
-                ?: return Result.failure(Exception("Mecánico no autenticado."))
-
-            val querySnapshot = inspectionsCollection
-                .whereEqualTo("mechanicId", mechanicId)
-                .orderBy("timestamp", Query.Direction.DESCENDING)
-                .get()
-                .await()
-
-            val inspections = querySnapshot.toObjects<Inspection>()
-            Result.success(inspections)
-
-        } catch (e: Exception) {
-            Result.failure(Exception("Error al obtener mis trabajos: ${e.message}"))
-        }
-    }
 
     suspend fun acceptInspection(inspectionId: String): Result<Unit> {
         return try {
@@ -132,7 +77,10 @@ class InspectionRepository {
         }
     }
 
-    suspend fun completeInspection(inspectionId: String): Result<Unit> {
+    suspend fun completeInspection(
+        inspectionId: String,
+        reportText: String
+    ): Result<Unit> {
         return try {
             val currentMechanicId = auth.currentUser?.uid
                 ?: return Result.failure(Exception("Mecánico no autenticado."))
@@ -144,7 +92,13 @@ class InspectionRepository {
                 val assignedMechanicId = snapshot.getString("mechanicId")
 
                 if (assignedMechanicId == currentMechanicId) {
-                    transaction.update(inspectionRef, "status", "FINALIZADO")
+                    transaction.update(
+
+                        inspectionRef, mapOf(
+                            "status" to "FINALIZADO",
+                            "reportText" to reportText
+                        )
+                    )
                 } else {
                     throw Exception("No tienes permiso para finalizar este trabajo.")
                 }
@@ -156,6 +110,7 @@ class InspectionRepository {
             Result.failure(Exception(e.message ?: "Error al finalizar el trabajo"))
         }
     }
+
     suspend fun getInspectionById(inspectionId: String): Result<Inspection> {
         return try {
             val document = inspectionsCollection.document(inspectionId).get().await()
@@ -171,7 +126,6 @@ class InspectionRepository {
         }
     }
 
-    // Métodos Flow para actualizaciones en tiempo real
     fun getMyInspectionsFlow(): Flow<List<Inspection>> = callbackFlow {
         val userId = auth.currentUser?.uid
         if (userId == null) {

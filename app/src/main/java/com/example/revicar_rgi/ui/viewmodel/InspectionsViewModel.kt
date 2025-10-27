@@ -1,5 +1,6 @@
 package com.example.revicar_rgi.ui.viewmodel
 
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.revicar_rgi.data.model.Inspection
@@ -7,8 +8,6 @@ import com.example.revicar_rgi.data.repository.InspectionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
@@ -26,11 +25,6 @@ class InspectionsViewModel(
     private val _uiState = MutableStateFlow(InspectionsUiState())
     val uiState: StateFlow<InspectionsUiState> = _uiState.asStateFlow()
 
-    val inspections: StateFlow<List<Inspection>> = _uiState.map { it.inspections }.stateIn(
-        scope = viewModelScope,
-        started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList()
-    )
 
     init {
         loadInspections()
