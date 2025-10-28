@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.revicar_rgi.ui.viewmodel.BuyerReportViewModel
 
@@ -32,7 +33,7 @@ fun BuyerReportScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Informe de Inspección") },
+                title = { Text("Informe de Inspección", fontSize = 20.sp) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
