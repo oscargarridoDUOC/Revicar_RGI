@@ -1,5 +1,6 @@
 package com.example.revicar_rgi.data.repository
 
+import android.util.Log
 import com.example.revicar_rgi.data.model.Inspection
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -17,6 +18,8 @@ class InspectionRepository {
     private val auth = Firebase.auth
     private val firestore = Firebase.firestore
     private val inspectionsCollection = firestore.collection("inspections")
+
+    private val TAG = "REVICAR_DEBUG"
 
     suspend fun submitInspection(
         dateMillis: Long,
@@ -81,6 +84,7 @@ class InspectionRepository {
         inspectionId: String,
         reportText: String
     ): Result<Unit> {
+        Log.d(TAG, "REPO: Iniciando completeInspection en $inspectionId")
         return try {
             val currentMechanicId = auth.currentUser?.uid
                 ?: return Result.failure(Exception("Mecánico no autenticado."))
@@ -92,21 +96,24 @@ class InspectionRepository {
                 val assignedMechanicId = snapshot.getString("mechanicId")
 
                 if (assignedMechanicId == currentMechanicId) {
+                    Log.d(TAG, "REPO: ¡Permiso concedido! Actualizando...")
                     transaction.update(
-
                         inspectionRef, mapOf(
                             "status" to "FINALIZADO",
                             "reportText" to reportText
                         )
                     )
                 } else {
+                    Log.d(TAG, "REPO: ¡Permiso DENEGADO! IDs no coinciden.")
                     throw Exception("No tienes permiso para finalizar este trabajo.")
                 }
             }.await()
 
+            Log.d(TAG, "REPO: Transacción .await() completada con éxito.")
             Result.success(Unit)
 
         } catch (e: Exception) {
+            Log.d(TAG, "REPO: CATCH! La transacción falló: ${e.message}")
             Result.failure(Exception(e.message ?: "Error al finalizar el trabajo"))
         }
     }

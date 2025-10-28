@@ -145,11 +145,15 @@ fun MechanicInspectionDetailScreen(
                                 }
                             }
                             "FINALIZADO" -> {
-                                Text(
-                                    text = "Este trabajo ya ha sido finalizado.",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                                )
+                                Button(
+                                    onClick = {
+                                        navController.navigate("${AppRoutes.MECHANIC_REPORT_ROUTE}/${inspectionId}")
+                                    },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    enabled = !uiState.isLoading
+                                ) {
+                                    Text("VER INFORME")
+                                }
                             }
                         }
                     }

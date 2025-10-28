@@ -24,4 +24,7 @@ object AppRoutes {
     const val INSPECTION_REPORT_SCREEN = "inspection_report/{inspectionId}"
     const val BUYER_REPORT_SCREEN = "buyer_report/{inspectionId}"
     const val BUYER_REPORT_ROUTE = "buyer_report"
+    const val PROFILE_SCREEN = "profile_screen"
+    const val MECHANIC_REPORT_SCREEN = "mechanic_report/{inspectionId}"
+    const val MECHANIC_REPORT_ROUTE = "mechanic_report"
 }

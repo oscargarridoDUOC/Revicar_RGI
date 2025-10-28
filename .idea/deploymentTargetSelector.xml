@@ -3,8 +3,8 @@
   <component name="deploymentTargetSelector">
     <selectionStates>
       <SelectionState runConfigName="app">
-        <option name="selectionMode" value="DIALOG" />
-        <DropdownSelection timestamp="2025-10-27T22:23:07.324925Z">
+        <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2025-10-28T01:42:50.163520Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=/Users/oscar/.android/avd/Medium_Phone_API_36.1_3.avd" />
@@ -15,17 +15,17 @@
           <targets>
             <Target type="DEFAULT_BOOT">
               <handle>
+                <DeviceId pluginId="LocalEmulator" identifier="path=/Users/oscar/.android/avd/Medium_Phone.avd" />
+              </handle>
+            </Target>
+            <Target type="DEFAULT_BOOT">
+              <handle>
                 <DeviceId pluginId="LocalEmulator" identifier="path=/Users/oscar/.android/avd/Medium_Phone_API_36.1_2.avd" />
               </handle>
             </Target>
             <Target type="DEFAULT_BOOT">
               <handle>
                 <DeviceId pluginId="LocalEmulator" identifier="path=/Users/oscar/.android/avd/Medium_Phone_API_36.1_3.avd" />
-              </handle>
-            </Target>
-            <Target type="DEFAULT_BOOT">
-              <handle>
-                <DeviceId pluginId="LocalEmulator" identifier="path=/Users/oscar/.android/avd/Medium_Phone.avd" />
               </handle>
             </Target>
           </targets>

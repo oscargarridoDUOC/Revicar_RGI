@@ -27,7 +27,8 @@ import java.util.*
 fun BuyerInspectionDetailScreen(
     inspectionId: String,
     viewModel: InspectionDetailViewModel,
-    navController: NavController
+    navController: NavController,
+    appNavController: NavController
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -131,7 +132,7 @@ fun BuyerInspectionDetailScreen(
                         if (inspection.status == "FINALIZADO") {
                             Button(
                                 onClick = {
-                                    navController.navigate("${AppRoutes.BUYER_REPORT_ROUTE}/${inspection.id}")
+                                    appNavController.navigate("${AppRoutes.BUYER_REPORT_ROUTE}/${inspection.id}")
                                 },
                                 modifier = Modifier.fillMaxWidth(),
                                 enabled = true

@@ -13,18 +13,25 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.revicar_rgi.data.repository.AuthRepository
 import com.example.revicar_rgi.data.repository.InspectionRepository
+import com.example.revicar_rgi.data.repository.LocalImageRepository
 import com.example.revicar_rgi.navigation.AppRoutes
 import com.example.revicar_rgi.ui.screens.MainAppScreen
+import com.example.revicar_rgi.ui.screens.buyer.BuyerReportScreen
 import com.example.revicar_rgi.ui.screens.common.LoginScreen
+import com.example.revicar_rgi.ui.screens.common.ProfileScreen
 import com.example.revicar_rgi.ui.screens.common.RegisterScreen
 import com.example.revicar_rgi.ui.screens.mechanic.InspectionReportScreen
 import com.example.revicar_rgi.ui.screens.mechanic.MechanicHomeScreen
 import com.example.revicar_rgi.ui.screens.mechanic.MechanicInspectionDetailScreen
+import com.example.revicar_rgi.ui.screens.mechanic.MechanicReportScreen
 import com.example.revicar_rgi.ui.theme.Revicar_RGITheme
 import com.example.revicar_rgi.ui.viewmodel.AuthViewModel
 import com.example.revicar_rgi.ui.viewmodel.AuthViewModelFactory
+import com.example.revicar_rgi.ui.viewmodel.BuyerReportViewModel
 import com.example.revicar_rgi.ui.viewmodel.InspectionDetailViewModel
 import com.example.revicar_rgi.ui.viewmodel.InspectionReportViewModel
+import com.example.revicar_rgi.ui.viewmodel.MechanicReportViewModel
+import com.example.revicar_rgi.ui.viewmodel.ProfileViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +43,7 @@ class MainActivity : ComponentActivity() {
         }
 
         val inspectionRepository = InspectionRepository()
+        val localImageRepository = LocalImageRepository(applicationContext)
 
         setContent {
             Revicar_RGITheme {
@@ -132,12 +140,72 @@ class MainActivity : ComponentActivity() {
                     ) { backStackEntry ->
                         val inspectionId = backStackEntry.arguments?.getString("inspectionId")
 
-                        val factory = InspectionReportViewModel.Factory(inspectionRepository)
+                        val factory = InspectionReportViewModel.Factory(
+                            inspectionRepository,
+                            localImageRepository
+                        )
                         val reportViewModel: InspectionReportViewModel =
                             viewModel(factory = factory)
 
                         if (inspectionId != null) {
                             InspectionReportScreen(
+                                inspectionId = inspectionId,
+                                viewModel = reportViewModel,
+                                navController = navController
+                            )
+                        }
+                    }
+
+                    composable(AppRoutes.PROFILE_SCREEN) {
+                        val factory = ProfileViewModel.Factory(repository)
+                        val profileViewModel: ProfileViewModel = viewModel(factory = factory)
+
+                        ProfileScreen(
+                            viewModel = profileViewModel,
+                            navController = navController,
+                            onLogout = {
+                                navController.navigate(AppRoutes.LOGIN_SCREEN) {
+                                    popUpTo(AppRoutes.MECHANIC_HOME_SCREEN) { inclusive = true }
+                                    popUpTo(AppRoutes.PROFILE_SCREEN) { inclusive = true }
+                                }
+                            }
+                        )
+                    }
+
+                    composable(
+                        route = AppRoutes.BUYER_REPORT_SCREEN,
+                        arguments = listOf(navArgument("inspectionId") { type = NavType.StringType })
+                    ) { backStackEntry ->
+                        val inspectionId = backStackEntry.arguments?.getString("inspectionId")
+
+                        val factory = BuyerReportViewModel.Factory(
+                            inspectionRepository
+                        )
+                        val reportViewModel: BuyerReportViewModel = viewModel(factory = factory)
+
+                        if (inspectionId != null) {
+                            BuyerReportScreen(
+                                inspectionId = inspectionId,
+                                viewModel = reportViewModel,
+                                navController = navController
+                            )
+                        }
+                    }
+
+                    composable(
+                        route = AppRoutes.MECHANIC_REPORT_SCREEN,
+                        arguments = listOf(navArgument("inspectionId") { type = NavType.StringType })
+                    ) { backStackEntry ->
+                        val inspectionId = backStackEntry.arguments?.getString("inspectionId")
+
+                        val factory = MechanicReportViewModel.Factory(
+                            inspectionRepository,
+                            localImageRepository
+                        )
+                        val reportViewModel: MechanicReportViewModel = viewModel(factory = factory)
+
+                        if (inspectionId != null) {
+                            MechanicReportScreen(
                                 inspectionId = inspectionId,
                                 viewModel = reportViewModel,
                                 navController = navController

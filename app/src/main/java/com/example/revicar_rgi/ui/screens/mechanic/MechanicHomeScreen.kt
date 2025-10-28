@@ -3,7 +3,7 @@ package com.example.revicar_rgi.ui.screens.mechanic
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -31,12 +31,9 @@ fun MechanicHomeScreen(
                 title = { Text("ReviCar Mecánico") },
                 actions = {
                     IconButton(onClick = {
-                        authViewModel.logout()
-                        navControllerApp.navigate(AppRoutes.LOGIN_SCREEN) {
-                            popUpTo(AppRoutes.MECHANIC_HOME_SCREEN) { inclusive = true }
-                        }
+                        navControllerApp.navigate(AppRoutes.PROFILE_SCREEN)
                     }) {
-                        Icon(Icons.Default.ExitToApp, contentDescription = "Cerrar Sesión")
+                        Icon(Icons.Default.Person, contentDescription = "Perfil")
                     }
                 }
             )
@@ -59,7 +56,7 @@ fun MechanicHomeScreen(
                     isLoading = uiState.isLoading,
                     error = uiState.error,
                     onJobClick = { inspectionId ->
-                      navControllerApp.navigate("${AppRoutes.MECHANIC_INSPECTION_DETAIL_ROUTE}/$inspectionId")
+                        navControllerApp.navigate("${AppRoutes.MECHANIC_INSPECTION_DETAIL_ROUTE}/$inspectionId")
                     }
                 )
                 1 -> MyJobsScreen(

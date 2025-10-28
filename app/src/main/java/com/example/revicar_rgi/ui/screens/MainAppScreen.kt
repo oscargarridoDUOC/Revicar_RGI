@@ -2,8 +2,8 @@ package com.example.revicar_rgi.ui.screens
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -21,15 +21,15 @@ import com.example.revicar_rgi.navigation.AppRoutes
 import com.example.revicar_rgi.navigation.BottomBar
 import com.example.revicar_rgi.ui.screens.buyer.BuyerHomeScreen
 import com.example.revicar_rgi.ui.screens.buyer.BuyerInspectionDetailScreen
-import com.example.revicar_rgi.ui.screens.buyer.BuyerReportScreen
 import com.example.revicar_rgi.ui.screens.buyer.InspectionFormScreen
 import com.example.revicar_rgi.ui.screens.buyer.InspectionsScreen
 import com.example.revicar_rgi.ui.screens.common.NotificationsScreen
+import com.example.revicar_rgi.ui.screens.common.ProfileScreen
 import com.example.revicar_rgi.ui.viewmodel.AuthViewModel
-import com.example.revicar_rgi.ui.viewmodel.BuyerReportViewModel
 import com.example.revicar_rgi.ui.viewmodel.InspectionDetailViewModel
 import com.example.revicar_rgi.ui.viewmodel.InspectionsViewModel
 import com.example.revicar_rgi.ui.viewmodel.NotificationsViewModel
+import com.example.revicar_rgi.ui.viewmodel.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,13 +48,8 @@ fun MainAppScreen(authViewModel: AuthViewModel, navControllerApp: NavHostControl
                     IconButton(onClick = { navController.navigate(AppRoutes.NOTIFICATIONS_SCREEN) }) {
                         Icon(Icons.Default.Notifications, contentDescription = "Notificaciones")
                     }
-                    IconButton(onClick = {
-                        authViewModel.logout()
-                        navControllerApp.navigate(AppRoutes.LOGIN_SCREEN) {
-                            popUpTo(AppRoutes.MAIN_APP_SCREEN) { inclusive = true }
-                        }
-                    }) {
-                        Icon(Icons.Default.ExitToApp, contentDescription = "Cerrar Sesión")
+                    IconButton(onClick = { navController.navigate(AppRoutes.PROFILE_SCREEN) }) {
+                        Icon(Icons.Default.Person, contentDescription = "Perfil")
                     }
                 }
             )
@@ -95,27 +90,25 @@ fun MainAppScreen(authViewModel: AuthViewModel, navControllerApp: NavHostControl
                     BuyerInspectionDetailScreen(
                         inspectionId = inspectionId,
                         viewModel = detailViewModel,
-                        navController = navController
+                        navController = navController,
+                        appNavController = navControllerApp
                     )
                 }
             }
 
-            composable(
-                route = AppRoutes.BUYER_REPORT_SCREEN,
-                arguments = listOf(navArgument("inspectionId") { type = NavType.StringType })
-            ) { backStackEntry ->
-                val inspectionId = backStackEntry.arguments?.getString("inspectionId")
+            composable(AppRoutes.PROFILE_SCREEN) {
+                val factory = ProfileViewModel.Factory(authRepository)
+                val profileViewModel: ProfileViewModel = viewModel(factory = factory)
 
-                val factory = BuyerReportViewModel.Factory(inspectionRepository)
-                val reportViewModel: BuyerReportViewModel = viewModel(factory = factory)
-
-                if (inspectionId != null) {
-                    BuyerReportScreen(
-                        inspectionId = inspectionId,
-                        viewModel = reportViewModel,
-                        navController = navController
-                    )
-                }
+                ProfileScreen(
+                    viewModel = profileViewModel,
+                    navController = navController,
+                    onLogout = {
+                        navControllerApp.navigate(AppRoutes.LOGIN_SCREEN) {
+                            popUpTo(AppRoutes.MAIN_APP_SCREEN) { inclusive = true }
+                        }
+                    }
+                )
             }
         }
     }
