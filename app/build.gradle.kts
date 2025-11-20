@@ -73,4 +73,18 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    // Kotest
+    testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
+    testImplementation("io.kotest:kotest-assertions-core:5.8.0")
+
+    // JUnit5
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+
+    // Mockk
+    testImplementation("io.mockk:mockk:1.13.10")
+
+    tasks.withType<Test>().configureEach {
+        useJUnitPlatform()
+    }
 }
