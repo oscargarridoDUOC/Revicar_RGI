@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.revicar_rgi.data.model.InspectionFormUiState
 import com.example.revicar_rgi.data.repository.InspectionRepository
+import com.example.revicar_rgi.data.repository.VehicleRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,6 +17,11 @@ class InspectionFormViewModel : ViewModel() {
     val uiState: StateFlow<InspectionFormUiState> = _uiState.asStateFlow()
 
     private val repository = InspectionRepository()
+    private val vehicleRepository = VehicleRepository()
+
+    init {
+        loadMarcas()
+    }
 
     fun updateDate(date: Long?) {
         _uiState.update { it.copy(dateMillis = date, error = null, isSubmitted = false) }
@@ -29,8 +35,26 @@ class InspectionFormViewModel : ViewModel() {
         _uiState.update { it.copy(make = value, error = null, isSubmitted = false) }
     }
 
+    fun updateMakeFromMarca(marcaId: Int, marcaNombre: String) {
+        _uiState.update { 
+            it.copy(
+                make = marcaNombre,
+                selectedMarcaId = marcaId,
+                model = "", // Limpiar modelo cuando se cambia la marca
+                modelos = emptyList(),
+                error = null,
+                isSubmitted = false
+            )
+        }
+        loadModelos(marcaId)
+    }
+
     fun updateModel(value: String) {
         _uiState.update { it.copy(model = value, error = null, isSubmitted = false) }
+    }
+
+    fun updateModelFromModelo(modeloNombre: String) {
+        _uiState.update { it.copy(model = modeloNombre, error = null, isSubmitted = false) }
     }
 
     fun updateYear(value: String) {
@@ -102,6 +126,72 @@ class InspectionFormViewModel : ViewModel() {
                     _uiState.update { it.copy(isLoading = false, error = error.message) }
                 }
             )
+        }
+    }
+
+    private fun loadMarcas() {
+        _uiState.update { it.copy(isLoadingMarcas = true, error = null) }
+        viewModelScope.launch {
+            try {
+                val marcas = vehicleRepository.getMarcas()
+                _uiState.update { 
+                    it.copy(
+                        marcas = marcas,
+                        isLoadingMarcas = false
+                    )
+                }
+            } catch (e: Exception) {
+                val errorMessage = when {
+                    e.message?.contains("Unable to resolve host") == true -> 
+                        "Error de conexión: No se puede conectar al servidor. Verifica tu conexión a internet."
+                    e.message?.contains("timeout") == true -> 
+                        "Error de conexión: El servidor tardó demasiado en responder."
+                    e.message?.contains("404") == true -> 
+                        "Error: Endpoint no encontrado. Verifica la URL de la API."
+                    e.message?.contains("500") == true -> 
+                        "Error del servidor: Problema interno del servidor."
+                    else -> "Error al cargar las marcas: ${e.message ?: e.localizedMessage ?: "Error desconocido"}"
+                }
+                _uiState.update { 
+                    it.copy(
+                        isLoadingMarcas = false,
+                        error = errorMessage
+                    )
+                }
+            }
+        }
+    }
+
+    private fun loadModelos(marcaId: Int) {
+        _uiState.update { it.copy(isLoadingModelos = true, error = null) }
+        viewModelScope.launch {
+            try {
+                val modelos = vehicleRepository.getModelosByMarca(marcaId)
+                _uiState.update { 
+                    it.copy(
+                        modelos = modelos,
+                        isLoadingModelos = false
+                    )
+                }
+            } catch (e: Exception) {
+                val errorMessage = when {
+                    e.message?.contains("Unable to resolve host") == true -> 
+                        "Error de conexión: No se puede conectar al servidor. Verifica tu conexión a internet."
+                    e.message?.contains("timeout") == true -> 
+                        "Error de conexión: El servidor tardó demasiado en responder."
+                    e.message?.contains("404") == true -> 
+                        "Error: No se encontraron modelos para esta marca."
+                    e.message?.contains("500") == true -> 
+                        "Error del servidor: Problema interno del servidor."
+                    else -> "Error al cargar los modelos: ${e.message ?: e.localizedMessage ?: "Error desconocido"}"
+                }
+                _uiState.update { 
+                    it.copy(
+                        isLoadingModelos = false,
+                        error = errorMessage
+                    )
+                }
+            }
         }
     }
 }

@@ -11,5 +11,10 @@ data class InspectionFormUiState(
     val serviceType: String = "",
     val error: String? = null,
     val isSubmitted: Boolean = false,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val marcas: List<Marca> = emptyList(),
+    val modelos: List<Modelo> = emptyList(),
+    val isLoadingMarcas: Boolean = false,
+    val isLoadingModelos: Boolean = false,
+    val selectedMarcaId: Int? = null
 )

@@ -63,6 +63,9 @@ dependencies {
     implementation(libs.androidx.navigation)
     implementation(libs.androidx.datastore)
     implementation(libs.io.coil)
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

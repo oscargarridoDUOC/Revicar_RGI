@@ -6,6 +6,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.*
@@ -110,31 +111,91 @@ fun InspectionFormScreen(
             Spacer(Modifier.height(24.dp))
             SectionTitle("2. Datos del Vehículo")
 
-            OutlinedTextField(
-                value = uiState.make,
-                onValueChange = { newValue ->
-                    if (newValue.length <= 20 && newValue.all { it.isLetter() || it.isWhitespace() }) {
-                        viewModel.updateMake(newValue)
+            var marcaExpanded by remember { mutableStateOf(false) }
+            ExposedDropdownMenuBox(
+                expanded = marcaExpanded,
+                onExpandedChange = { marcaExpanded = !marcaExpanded },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                OutlinedTextField(
+                    value = uiState.make,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Marca") },
+                    trailingIcon = {
+                        if (uiState.isLoadingMarcas) {
+                            CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                        } else {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = marcaExpanded)
+                        }
+                    },
+                    modifier = Modifier
+                        .menuAnchor()
+                        .fillMaxWidth(),
+                    enabled = !uiState.isLoading && !uiState.isSubmitted && !uiState.isLoadingMarcas
+                )
+                ExposedDropdownMenu(
+                    expanded = marcaExpanded,
+                    onDismissRequest = { marcaExpanded = false }
+                ) {
+                    uiState.marcas.forEach { marca ->
+                        DropdownMenuItem(
+                            text = { Text(marca.nombre) },
+                            onClick = {
+                                viewModel.updateMakeFromMarca(marca.id, marca.nombre)
+                                marcaExpanded = false
+                            }
+                        )
                     }
-                },
-                label = { Text("Marca") },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isLoading && !uiState.isSubmitted,
-                singleLine = true
-            )
+                }
+            }
+
             Spacer(Modifier.height(8.dp))
-            OutlinedTextField(
-                value = uiState.model,
-                onValueChange = { newValue ->
-                    if (newValue.length <= 50 && newValue.all { it.isLetterOrDigit() || it.isWhitespace() }) {
-                        viewModel.updateModel(newValue)
+
+            var modeloExpanded by remember { mutableStateOf(false) }
+            ExposedDropdownMenuBox(
+                expanded = modeloExpanded && uiState.selectedMarcaId != null,
+                onExpandedChange = { if (uiState.selectedMarcaId != null) modeloExpanded = !modeloExpanded },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                OutlinedTextField(
+                    value = uiState.model,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Modelo") },
+                    trailingIcon = {
+                        if (uiState.isLoadingModelos) {
+                            CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                        } else {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = modeloExpanded)
+                        }
+                    },
+                    modifier = Modifier
+                        .menuAnchor()
+                        .fillMaxWidth(),
+                    enabled = uiState.selectedMarcaId != null && 
+                             !uiState.isLoading && 
+                             !uiState.isSubmitted && 
+                             !uiState.isLoadingModelos,
+                    placeholder = { 
+                        Text(if (uiState.selectedMarcaId == null) "Seleccione una marca primero" else "Seleccione un modelo")
                     }
-                },
-                label = { Text("Modelo") },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isLoading && !uiState.isSubmitted,
-                singleLine = true
-            )
+                )
+                ExposedDropdownMenu(
+                    expanded = modeloExpanded,
+                    onDismissRequest = { modeloExpanded = false }
+                ) {
+                    uiState.modelos.forEach { modelo ->
+                        DropdownMenuItem(
+                            text = { Text(modelo.nombre) },
+                            onClick = {
+                                viewModel.updateModelFromModelo(modelo.nombre)
+                                modeloExpanded = false
+                            }
+                        )
+                    }
+                }
+            }
             Spacer(Modifier.height(8.dp))
             OutlinedTextField(
                 value = uiState.year,
