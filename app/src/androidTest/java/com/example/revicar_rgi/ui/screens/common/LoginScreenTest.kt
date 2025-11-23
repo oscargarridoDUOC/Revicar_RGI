@@ -43,7 +43,6 @@ class LoginScreenTest {
         // Verificar botón "Ingresar"
         composeTestRule.onNodeWithText("Ingresar").assertIsDisplayed()
         // No hacemos click para evitar llamadas de red reales que podrían fallar o tardar
-        // composeTestRule.onNodeWithText("Ingresar").performClick()
 
         // Verificar link de registro
         composeTestRule.onNodeWithText("¿No tienes cuenta? Regístrate").assertIsDisplayed()
