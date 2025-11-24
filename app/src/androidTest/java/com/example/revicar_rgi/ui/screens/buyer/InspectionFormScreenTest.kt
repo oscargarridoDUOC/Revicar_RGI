@@ -63,7 +63,7 @@ class InspectionFormScreenTest {
     // Verifica que la UI muestre los títulos clave
     @OptIn(ExperimentalMaterial3Api::class)
     @Test
-    fun inspectionForm_showsBasicFields() {
+    fun formularioInspeccion_muestraCamposBasicos() {
 
         val uiState = InspectionFormUiState(
             make = "Toyota",
@@ -88,7 +88,7 @@ class InspectionFormScreenTest {
     //Verifica que el botón está presente
     @OptIn(ExperimentalMaterial3Api::class)
     @Test
-    fun inspectionForm_hasSubmitButton() {
+    fun formularioInspeccion_tieneBotonEnviar() {
 
         composeTestRule.setContent {
             InspectionFormContentForTest(InspectionFormUiState())

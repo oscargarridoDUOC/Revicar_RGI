@@ -61,7 +61,7 @@ class BuyerReportScreenTest {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Test
-    fun reportScreen_ShowsDataCorrectly() {
+    fun pantallaReporte_MuestraDatosCorrectamente() {
         val fakeInspection = Inspection(
             id = "1",
             userId = "1",
@@ -98,7 +98,7 @@ class BuyerReportScreenTest {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Test
-    fun reportScreen_ShowsLoading() {
+    fun pantallaReporte_MuestraCargando() {
         val uiState = BuyerReportUiState(isLoading = true)
 
         composeTestRule.setContent {
@@ -110,7 +110,7 @@ class BuyerReportScreenTest {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Test
-    fun reportScreen_ShowsError() {
+    fun pantallaReporte_MuestraError() {
         val uiState = BuyerReportUiState(
             isLoading = false,
             error = "No se pudo cargar"

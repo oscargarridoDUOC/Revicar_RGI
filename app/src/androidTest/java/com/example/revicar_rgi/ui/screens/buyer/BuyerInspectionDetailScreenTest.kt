@@ -172,7 +172,7 @@ class BuyerInspectionDetailScreenTest {
     }
 
     @Test
-    fun verifyStaticElementsAreDisplayed() {
+    fun verificaElementosEstticosSeMuestran() {
         val fakeInspection = Inspection(
             id = "1",
             userId = "99",
@@ -227,7 +227,7 @@ class BuyerInspectionDetailScreenTest {
     }
 
     @Test
-    fun verifyViewReportButtonCallsCallbackWhenFinalizado() {
+    fun verificaBotonVerInformeLlamaCallbackCuandoFinalizado() {
         var clickedId: String? = null
 
         val fakeInspection = Inspection(

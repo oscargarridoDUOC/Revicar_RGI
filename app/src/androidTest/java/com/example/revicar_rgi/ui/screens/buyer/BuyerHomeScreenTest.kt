@@ -12,7 +12,7 @@ class BuyerHomeScreenTest {
     val composeTestRule = createComposeRule()
 
     @Test
-    fun verifyUIElementsAreDisplayed() {
+    fun verificaElementosDeIUSeMuestran() {
         composeTestRule.setContent {
             val navController = rememberNavController()
             BuyerHomeScreen(navController = navController)
@@ -30,7 +30,7 @@ class BuyerHomeScreenTest {
     }
 
     @Test
-    fun buttonClickTriggersAction() {
+    fun clickEnBotonDisparaAccion() {
         composeTestRule.setContent {
             val navController = rememberNavController()
             BuyerHomeScreen(navController = navController)

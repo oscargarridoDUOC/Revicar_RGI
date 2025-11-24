@@ -65,7 +65,7 @@ class InspectionsScreenTest {
 
 
     @Test
-    fun inspectionsScreen_showsLoadingState() {
+    fun pantallaInspecciones_muestraEstadoCargando() {
 
         val uiState = InspectionsUiState(
             inspections = emptyList(),
@@ -81,7 +81,7 @@ class InspectionsScreenTest {
 
 
     @Test
-    fun inspectionsScreen_showsErrorMessage() {
+    fun pantallaInspecciones_muestraMensajeError() {
 
         val uiState = InspectionsUiState(
             inspections = emptyList(),
@@ -98,7 +98,7 @@ class InspectionsScreenTest {
 
 
     @Test
-    fun inspectionsScreen_showsEmptyListMessage() {
+    fun pantallaInspecciones_muestraMensajeListaVacia() {
 
         val uiState = InspectionsUiState(
             inspections = emptyList(),
@@ -116,7 +116,7 @@ class InspectionsScreenTest {
 
 
     @Test
-    fun inspectionsScreen_showsInspectionItems() {
+    fun pantallaInspecciones_muestraItemsInspeccion() {
 
         val inspection1 = Inspection(
             id = "1",
