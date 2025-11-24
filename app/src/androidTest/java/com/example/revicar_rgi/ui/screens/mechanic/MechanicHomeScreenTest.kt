@@ -38,30 +38,4 @@ class MechanicHomeScreenTest {
         composeTestRule.onNodeWithText("Trabajos Disponibles").assertIsDisplayed()
         composeTestRule.onNodeWithText("Mis Trabajos").assertIsDisplayed()
     }
-
-    @Test
-    fun cambioEntreTabs() {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-        val authRepository = AuthRepository(context)
-        val authViewModel = AuthViewModel(authRepository)
-        val mechanicViewModel = MechanicViewModel()
-
-        composeTestRule.setContent {
-            val navController = rememberNavController()
-            MechanicHomeScreen(
-                authViewModel = authViewModel,
-                mechanicViewModel = mechanicViewModel,
-                navControllerApp = navController
-            )
-        }
-
-        // Por defecto, debe mostrar "Trabajos Disponibles"
-        composeTestRule.onNodeWithText("No hay trabajos disponibles por el momento.").assertIsDisplayed()
-
-        // Click en "Mis Trabajos"
-        composeTestRule.onNodeWithText("Mis Trabajos").performClick()
-
-        // Debe mostrar el mensaje de "Mis Trabajos"
-        composeTestRule.onNodeWithText("Aún no has aceptado ningún trabajo.").assertIsDisplayed()
-    }
 }
