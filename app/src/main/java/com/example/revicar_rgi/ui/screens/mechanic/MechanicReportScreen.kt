@@ -95,7 +95,7 @@ fun MechanicReportScreen(
                             style = MaterialTheme.typography.bodyLarge
                         )
 
-                        if (uiState.localImageUris.isNotEmpty()) {
+                        if (uiState.imageUrls.isNotEmpty()) {
                             Spacer(Modifier.height(24.dp))
                             Text(
                                 "Fotos Adjuntas",
@@ -106,9 +106,9 @@ fun MechanicReportScreen(
                             LazyRow(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                items(uiState.localImageUris) { uri ->
+                                items(uiState.imageUrls) { url ->
                                     AsyncImage(
-                                        model = uri,
+                                        model = url,
                                         contentDescription = "Foto de inspección",
                                         modifier = Modifier
                                             .size(120.dp)

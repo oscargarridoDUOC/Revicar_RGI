@@ -49,28 +49,30 @@ fun InspectionCard(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            Text(
+                text = "${inspection.make} ${inspection.model} (${inspection.year})",
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold
+            )
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "${inspection.make} ${inspection.model} (${inspection.year})",
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
+                    text = "${inspection.direccion}, ${inspection.comuna}",
+                    fontSize = 16.sp,
+                    modifier = Modifier.weight(1f)
                 )
                 Text(
                     text = inspection.status,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = statusColor
+                    color = statusColor,
+                    modifier = Modifier.padding(start = 8.dp)
                 )
             }
-
-            Text(
-                text = "${inspection.direccion}, ${inspection.comuna}",
-                fontSize = 16.sp
-            )
 
             Text(
                 text = formattedPrice,

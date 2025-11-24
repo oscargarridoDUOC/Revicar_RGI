@@ -15,6 +15,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.compose.foundation.border
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.draw.clip
 import com.example.revicar_rgi.ui.viewmodel.BuyerReportViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -87,6 +91,35 @@ fun BuyerReportScreen(
                             text = inspection.reportText ?: "El mecánico no ha dejado comentarios.",
                             style = MaterialTheme.typography.bodyLarge
                         )
+
+                        if (inspection.imageUrls.isNotEmpty()) {
+                            Spacer(Modifier.height(24.dp))
+                            Text(
+                                "Fotos Adjuntas",
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+                            LazyRow(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                items(inspection.imageUrls) { url ->
+                                    coil.compose.AsyncImage(
+                                        model = url,
+                                        contentDescription = "Foto de inspección",
+                                        modifier = Modifier
+                                            .size(120.dp)
+                                            .clip(androidx.compose.foundation.shape.RoundedCornerShape(8.dp))
+                                            .border(
+                                                1.dp,
+                                                MaterialTheme.colorScheme.outline,
+                                                androidx.compose.foundation.shape.RoundedCornerShape(8.dp)
+                                            ),
+                                        contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
                 else -> {

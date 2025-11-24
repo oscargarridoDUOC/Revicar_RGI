@@ -17,7 +17,7 @@ data class MechanicReportUiState(
     val inspection: Inspection? = null,
     val isLoading: Boolean = false,
     val error: String? = null,
-    val localImageUris: List<Uri> = emptyList()
+    val imageUrls: List<String> = emptyList()
 )
 
 class MechanicReportViewModel(
@@ -34,12 +34,11 @@ class MechanicReportViewModel(
             val result = inspectionRepository.getInspectionById(inspectionId)
             result.fold(
                 onSuccess = { inspection ->
-                    val imageUris = localImageRepository.getImageUrisForInspection(inspectionId)
                     _uiState.update {
                         it.copy(
                             isLoading = false,
                             inspection = inspection,
-                            localImageUris = imageUris
+                            imageUrls = inspection.imageUrls
                         )
                     }
                 },

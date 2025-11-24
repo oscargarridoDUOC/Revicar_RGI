@@ -21,5 +21,6 @@ data class Inspection(
     val status: String = "PENDIENTE",
     @ServerTimestamp
     val timestamp: Date? = null,
-    val reportText: String? = null
+    val reportText: String? = null,
+    val imageUrls: List<String> = emptyList()
 )

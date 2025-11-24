@@ -56,6 +56,7 @@ dependencies {
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation(libs.google.firebase.auth)
     implementation(libs.google.firebase.firestore)
+    implementation(libs.google.firebase.storage)
     implementation(libs.google.firebase.analytics)
 
     implementation("androidx.compose.material:material-icons-extended")

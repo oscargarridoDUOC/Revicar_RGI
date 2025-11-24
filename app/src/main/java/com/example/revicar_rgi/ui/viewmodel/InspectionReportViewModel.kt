@@ -54,24 +54,33 @@ class InspectionReportViewModel(
             Log.d(TAG, "VM: Iniciando saveReport...")
             _uiState.update { it.copy(isSaving = true, error = null) }
 
-            localImageRepository.saveImages(
+            val uploadResult = repository.uploadImages(
                 inspectionId = inspectionId,
-                tempUris = _uiState.value.images
+                imageUris = _uiState.value.images
             )
 
-            val saveResult = repository.completeInspection(
-                inspectionId = inspectionId,
-                reportText = _uiState.value.reportText
-            )
+            uploadResult.fold(
+                onSuccess = { imageUrls ->
+                    val saveResult = repository.completeInspection(
+                        inspectionId = inspectionId,
+                        reportText = _uiState.value.reportText,
+                        imageUrls = imageUrls
+                    )
 
-            saveResult.fold(
-                onSuccess = {
-                    Log.d(TAG, "VM: saveReport tuvo ÉXITO.")
-                    _uiState.update { it.copy(isSaving = false, saveSuccess = true) }
+                    saveResult.fold(
+                        onSuccess = {
+                            Log.d(TAG, "VM: saveReport tuvo ÉXITO.")
+                            _uiState.update { it.copy(isSaving = false, saveSuccess = true) }
+                        },
+                        onFailure = { error ->
+                            Log.d(TAG, "VM: saveReport FALLÓ al guardar datos: ${error.message}")
+                            _uiState.update { it.copy(isSaving = false, error = error.message) }
+                        }
+                    )
                 },
                 onFailure = { error ->
-                    Log.d(TAG, "VM: saveReport FALLÓ: ${error.message}")
-                    _uiState.update { it.copy(isSaving = false, error = error.message) }
+                    Log.d(TAG, "VM: saveReport FALLÓ al subir imágenes: ${error.message}")
+                    _uiState.update { it.copy(isSaving = false, error = "Error al subir imágenes: ${error.message}") }
                 }
             )
             Log.d(TAG, "VM: saveReport terminado.")

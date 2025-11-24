@@ -80,9 +80,29 @@ class InspectionRepository {
         }
     }
 
+    suspend fun uploadImages(inspectionId: String, imageUris: List<android.net.Uri>): Result<List<String>> {
+        return try {
+            val storageRef = com.google.firebase.storage.FirebaseStorage.getInstance().reference
+            val uploadedUrls = mutableListOf<String>()
+
+            for (uri in imageUris) {
+                val fileName = "${java.util.UUID.randomUUID()}.jpg"
+                val imageRef = storageRef.child("inspections/$inspectionId/$fileName")
+                
+                imageRef.putFile(uri).await()
+                val downloadUrl = imageRef.downloadUrl.await()
+                uploadedUrls.add(downloadUrl.toString())
+            }
+            Result.success(uploadedUrls)
+        } catch (e: Exception) {
+            Result.failure(Exception("Error al subir imágenes: ${e.message}"))
+        }
+    }
+
     suspend fun completeInspection(
         inspectionId: String,
-        reportText: String
+        reportText: String,
+        imageUrls: List<String>
     ): Result<Unit> {
         Log.d(TAG, "REPO: Iniciando completeInspection en $inspectionId")
         return try {
@@ -100,7 +120,8 @@ class InspectionRepository {
                     transaction.update(
                         inspectionRef, mapOf(
                             "status" to "FINALIZADO",
-                            "reportText" to reportText
+                            "reportText" to reportText,
+                            "imageUrls" to imageUrls
                         )
                     )
                 } else {
